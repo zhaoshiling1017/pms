@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>404  Not Found</title>
+
+	#parse('common/path-css.vm')
+
+</head>
+<body>
+<div id="container" class="cls-container">
+	<!-- HEADER -->
+	<!--===================================================-->
+	<div class="cls-header">
+		<div class="cls-brand">
+			<a class="box-inline" href="index.html">
+##				<img alt="DuceTech Admin" src="static/images/logo.png" class="brand-icon">
+				<span class="brand-title">DuceTech <span class="text-thin">Admin</span></span>
+			</a>
+		</div>
+	</div>
+
+
+	<!-- CONTENT -->
+	<!--===================================================-->
+	<div class="cls-content">
+		<h1 class="error-code text-warning">404</h1>
+		<p class="h4 text-thin pad-btm mar-btm">
+			<i class="fa fa-exclamation-circle fa-fw"></i>
+			对不起，您所访问的页面不存在。
+		</p>
+		<br>
+		<div class="pad-top"><a class="btn-link" href="/">返回首页</a></div>
+	</div>
+
+</div>
+<!--===================================================-->
+<!-- END OF CONTAINER -->
+#parse('common/path-js.vm')
+</body>
+</html>

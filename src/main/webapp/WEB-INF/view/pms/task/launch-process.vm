@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>发起流程</title>
+    #parse('common/path-css.vm')
+</head>
+<body>
+<div class="wrapper weight-bold">
+    <!--planel-->
+    <div class="panel">
+        <!--planel-head-->
+        <div class="panel-head">
+            <h4>发起流程</h4>
+        </div>
+        <!--planel-body-->
+        <div class="panel-body padding-10">
+            <div class="the-information-input">
+                <form id="procinstsForm">
+                    <div class="row clear mar-top-10 pos-relative">
+                        <label for="choose-process" class="red-star">选择流程：</label>
+                        <select type="text" class="changed-width reset-input" id="choose-process" name="procdefId">
+                            <option value=""></option>
+                            #foreach($procdef in $procdefs)
+								<option value="$!procdef.procdefId">$!procdef.procName</option>
+							#end
+                        </select>
+                    </div>
+					<!--
+                    <div class="row clear mar-top-10">
+                        <label for="regulations-time" class="red-star">规定时间：</label>
+                        <select name="regulations-time" id="regulations-time" class="reset-input">
+                            <option value="0">请选择</option>
+                            <option value="1">2016-09-10 13:23:24</option>
+                        </select>
+                    </div>
+					-->
+                    <div class="row clear mar-top-10">
+                        <label for="process-remark">流程备注：</label>
+                        <textarea name="comment" id="process-remark" class="changed-width" rows="10" placeholder="请输入"></textarea>
+                    </div>
+                    <div class="footer btn-group mar-top-10">
+						<!--
+                        <button type="reset" class="btn btn-cancel">重置</button>
+						-->
+                        <button type="button" class="btn btn-primary" onclick="startProcess()">提交</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="$path/static/js/jquery.min.js" type="application/javascript"></script>
+<script src="$path/static/js/index.js" type="application/javascript"></script>
+<script src="$path/static/js/alert.js" type="text/javascript"></script>
+<script>
+function startProcess(){
+	var result = formValidation($("#procinstsForm"));
+	if(!result){
+		return false;
+	}
+	jQuery.ajax({
+       type: "post",
+       url: "$path/procinsts/startProcess",
+       data: $('#procinstsForm').serialize(),
+       dataType: "json",
+       error: function (request) {
+       		initAlert(0,"网络错误");   
+       },
+       success: function (data) {
+			for(x in data){
+       			initAlert(x,data[x]);
+       		} 
+       		$("#mask",parent.document).hide();
+			setTimeout(function(){
+				$("#myiframe",parent.document).attr("src","$path/main");
+				$(".nav-home",parent.document).addClass("selected").siblings().removeClass("selected");
+			},3000)      		
+       	}
+	});
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>任务-待办任务处理</title>
+   	#parse('common/path-css.vm')
+   	<link rel="stylesheet" href="$path/static/css/bootstrap-datetimepicker.css" type="text/css">
+	<link rel="stylesheet" href="$path/static/css/webuploader.css">
+    <link rel="stylesheet" href="$path/static/css/diyUpload.css">
+</head>
+<body>
+<div class="wrapper">
+    <!--planel-->
+    <div class="panel">
+        <!--planel-head-->
+        <div class="panel-head">
+            <div class="left mar-left-10">
+                <h4 class="has-link">任务</h4>
+                <b class="blue-font">待办任务处理</b>
+            </div>
+            #if($!pageType=='0')
+				<a href="$path/main" class="btn btn-back" target="myiframe">返回</a>
+			#elseif($!pageType=='1')
+				<a href="$path/tasks/task" class="btn btn-back" target="myiframe">返回</a>
+			#elseif($!pageType=='6')
+				<a href="$path/notices/notice" class="btn btn-back" target="myiframe">返回</a>
+			#end
+        </div>
+        <!--planel-body-->
+        <div class="panel-body padding-10 clear around-layout">
+            <div class="left">
+                <div class="mar-right-10">
+					<input type="hidden" name="uuid" id='uuid' value="$!uuid" data-url="$path/file/upload/">
+                    <h3 class="table-title">流程信息</h3>
+                    <div class="height-mark1-anchor">
+                        <div class="the-information-list border-all indent-span">
+                            <p>
+                                <label>流程编号</label>
+                                <span>$!procinst.procinstCode</span>
+                            </p>
+                            <p>
+                                <label>流程名称</label>
+                                <span>$!procinst.procName</span>
+                            </p>
+							 <p>
+                                <label>流程类型</label>
+								#if($!procinst.procType=='0')
+									<span>普通流程</span>
+								#elseif($!procinst.procType=='1')
+									<span>临时流程</span>
+								#end
+                            </p>
+							<p>
+								<label>发起人</label>
+								<span>$!procinst.startPerson.name</span>
+                            </p>
+                            <p>
+                                <label>发起时间</label>
+                                <span>$!procinst.startTime</span>
+                            </p>
+							 <p>
+                                <label>流程备注</label>
+                                <span>$!procinst.comment</span>
+                            </p>
+                        </div>
+                        <h3 class="table-title">上节点信息</h3>
+                        <div class="the-information-list border-all indent-span">
+                            <p>
+                                <label>上一任务编码</label>
+                                <span>$!uptask.taskCode</span>
+                            </p>
+							<p>
+                                <label>上一节点名称</label>
+                                <span>
+									#if($!upNode.nodeName)
+										$!upNode.nodeName ($!uptask.role.roleName)
+									#end
+								</span>
+                            </p>
+							<p>
+                                <label>上一节点类型</label>
+								#if($!upNode.nodeType=='0')
+									<span>普通节点</span>
+								#elseif($!upNode.nodeType=='1')
+									<span>审批节点</span>
+								#end
+                            </p>
+                            <p>
+                                <label>提交人</label>
+                                <span>$!uptask.disposePersion.name</span>
+                            </p>
+                            <p>
+                                <label>提交时间</label>
+                                <span>$!uptask.disposeTime</span>
+                            </p>
+							<p>
+                                <label>备注</label>
+                                <span>$!task.comment</span>
+							</p>
+							#if($!task.approveTask)
+								<hr>
+    							<p>
+                                    <label>退回人</label>
+                                    <span>$!task.approveTask.backPersion.name</span>
+                                </p>
+    							<p>
+                                    <label>退回时间</label>
+                                    <span>$!task.approveTask.backTime</span>
+                                </p>
+    							<p>
+                                    <label>退回原因</label>
+                                    <span>$!task.approveTask.backComment</span>
+                                </p>
+							#end
+                        </div>
+                    </div>
+					#if($!task.nodeType=='1')
+					<div class="btn-group footer mar-down-10">
+						<a  class="btn btn-warn" href="javascript:void(0)" data-modal="return-task">退回</a>
+                    </div>
+					#end
+                    <h3 class="table-title blue-font">任务处理</h3>
+					<div class="the-information-list border-all indent-span">
+    					<p>
+    						<label>当前任务编码</label>
+                            <span>$!task.taskCode</span>
+                        </p>	
+    					<p>
+    						<label>当前任务节点</label>
+                            <span>$!task.nodeName ($!task.role.roleName)</span>
+                        </p>
+    					<p>
+    						<label>当前节点类型</label>
+    						#if($!task.nodeType=='0')
+    							<span>普通节点</span>
+    						#elseif($!task.nodeType=='1')
+    							<span>审批节点</span>
+    						#end
+                        </p>
+                        <p>
+                            <label>当前任务时限</label>
+                            <span>$!task.timeLimit</span>
+                        </p>
+					</div>
+                    <form id="taskForm">
+						<input type="hidden" value="$!task.taskId" name="taskId"/>
+						<input type="hidden" name="file" id="taskFile"/>
+                        <div class="the-information-input border-all height-mark2-anchor" style="margin-top:-1px;">
+							#foreach($node in $nextNodes)
+							<input type="hidden" value="$!node.nodeId" name="tasks[$math.sub($velocityCount,1)].nodeId"/>
+                            <div class="clear mar-top-10">
+								<label>下节点名称：</label>
+								<span>$!node.nodeName</span>
+                            </div>
+							 <div class="clear">
+								<label>下节点类型：</label>
+								#if($!node.nodeType=='0')
+									<span>普通节点</span>
+								#elseif($!node.nodeType=='1')
+									<span>审批节点</span>
+								#end
+                            </div>
+							<div class="row clear mar-top-10">
+								<input type="hidden" name="tasks[$math.sub($velocityCount,1)].roleId" id="$!node.nodeId"/>
+                                <label class="red-star">选择角色：</label>
+                                <div class="left dropDown Multiselect changed-width">
+                                    <ul class="select-drop clear"></ul>
+                                    <ul class="can-select">
+                                        <li class="clear">
+                                            <input type="checkbox" class="select-all-items"/>
+                                            <label>全选</label>
+                                        </li>
+										#foreach($role in $node.roles)
+                                        <li class="clear">
+                                            <input type="checkbox" name="$!node.nodeId" value="$!role.roleId"/>
+                                            <label>$!role.roleName</label>
+                                        </li>
+										#end
+                                    </ul>
+                                    <span class="icon-lower-triangle"></span>
+                                </div>
+                            </div>
+							#if($!node.isTime=='0')
+                            <div class="row clear mar-top-10">
+                                <label class="red-star" for="task-range-time">任务时限：</label>
+                                <div class='input-group datetimepicker date-picker date'>
+		                            <input type='text' name="tasks[$math.sub($velocityCount,1)].timeLimit"/>
+		                            <em class="input-group-addon">
+		                                <i class="icon icon-calendar-alt-stroke"></i>
+		                            </em>
+		                        </div>
+                            </div>
+							#end
+                            <div class="row clear mar-top-10">
+                                <label for="task-remarks">任务备注：</label>
+                                 <textarea rows="5" class="changed-width" placeholder="请输入" id="task-remarks" name="tasks[$math.sub($velocityCount,1)].comment"></textarea>
+                            </div>
+							#end
+                            <div class="clear">
+							#if($!task.nextNodeId)
+								#if($!task.nextNodeId!='-1' && $!task.nextNodeId!='')
+								 <div class="row clear">
+                                	<div class="upload-container" style="margin-left:80px;">
+                                        <span class="icon icon-pin"></span>
+                                        <span id="upload">附件上传</span>
+                                    </div>
+                                </div>
+								#end
+							#end
+                                <div class="right changed-width">
+                                    <div class="btn-group footer mar-down-10">
+										<!--
+                                        <button type="reset" class="btn-cancel btn">重置</button>
+										-->
+                                        <button class="btn btn-primary" type="button" onclick="taskSubmit()">提交</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="right">
+                <div class="mar-left-10">
+                    <h3 class="table-title">流转记录</h3>
+                    <div class="height-mark1 border-all">
+                        <!-- stripe table -->
+                        <table class="table table-stripe">
+                            <thead>
+                            <tr>
+                                <th>节点名称</th>
+                                <th>操作</th>
+                                <th>处理人</th>
+                                <th>处理时间</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+							#foreach($task in $recordTask)
+                            <tr>
+                                <td title="$!task.nodeName ($!task.role.roleName)">$!task.nodeName ($!task.role.roleName)</td>
+								<td>
+									#if($!task.nodeType=='0')
+										提交
+									#else
+										#if($!task.isBack=='0')
+											提交
+										#else
+											退回
+										#end
+									#end
+								</td>
+                                <td title="$!task.disposePersion.name">$!task.disposePersion.name</td>
+                                <td title="$!task.disposeTime">$!task.disposeTime</td>
+                            </tr>
+							#end
+                            </tbody>
+                        </table>
+                        <!-- end -->
+                    </div>
+                    <h3 class="table-title">附件信息</h3>
+                    <div class="border-all height230">
+                        <!-- stripe table -->
+                        <table class="table table-stripe">
+                            <thead>
+                            <tr>
+                                <th>附件名称</th>
+                                <th>上传时间</th>
+                                <th>上传节点</th>
+                                <th>上传人</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+							#foreach($file in $!procinstFiles)
+                            <tr>
+                                <td title="$!file.fileName">$!file.fileName</td>
+                                <td title="$!file.uploadTime">$!file.uploadTime</td>
+								<td title="$!file.uploadNode.nodeName ($!file.uploadRole.roleName)">$!file.uploadNode.nodeName ($!file.uploadRole.roleName)</td>
+                                <td title="$!file.uploadPerson.name">$!file.uploadPerson.name</td>
+                                <td class="blue-font">
+                                    <a href="javascript:void(0);" onclick="downloadTaskFile($!file.procinstFileId);">下载</a>
+                                </td>
+                            </tr>
+							#end
+                            </tbody>
+                        </table>
+                        <!-- end -->
+                    </div>
+					<h3 class="table-title">后补附件</h3>
+                    <div class="border-all height230">
+                        <!-- stripe table -->
+                        <table class="table table-stripe">
+                            <thead>
+                            <tr>
+                                <th>附件名称</th>
+                                <th>上传时间</th>
+                                <th>上传人</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+							#foreach($file in $!fillingFiles)
+                            <tr>
+                                <td title="$!file.fileName">$!file.fileName</td>
+                                <td title="$!file.uploadTime">$!file.uploadTime</td>
+                                <td title="$!file.uploadPerson.name">$!file.uploadPerson.name</td>
+                                <td class="blue-font">
+                                    <a href="javascript:void(0);" onclick="downloadTaskFile($!file.procinstFileId);">下载</a>
+                                </td>
+                            </tr>
+							#end
+                            </tbody>
+                        </table>
+                        <!-- end -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="return-task">
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <h3 class="orange-font left weight-bold">退回工单</h3>
+            <a href="javascript:void(0)" class="icon-delete right"></a>
+        </div>
+		<form id="returnTaskForm">
+    		<input type="hidden" value="$!task.taskId" name="taskId"/>
+            <div class="modal-body min-height">
+                <div class="the-information-list">
+                    <p class="mar-top-20 row clear">
+                        <label>流程名称：</label>
+                        <span>$!procinst.procName</span>
+                    </p>
+                    <p class="row clear mar-top-20">
+                        <label>任务编号：</label>
+                        <span>$!task.taskCode</span>
+                    </p>
+                    <p class="row clear mar-top-20">
+                        <label for="back-reason" class="red-star">退回原因：</label>
+                        <textarea name="backComment" id="back-reason" placeholder="请输入" cols="65" rows="8"></textarea>
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer  clear">
+                <div class="btn-group">
+    				<button class="btn btn-warn" type="button" onclick="returnTask()">确认退回</button>
+                    <a href="javascript:void(0)" class="btn btn-primary disappear-modal">取消</a>
+                </div>
+            </div>
+		</form>
+	</div>
+</div>
+<script src="$path/static/js/jquery.min.js" type="application/javascript"></script>
+<script src="$path/static/js/moment.min.js" type="application/javascript"></script>
+<script src="$path/static/js/bootstrap-datetimepicker.js" type="text/javascript"></script>
+<script src="$path/static/js/datetimepicker.js" type="text/javascript"></script>
+<script src="$path/static/js/main.js" type="text/javascript"></script>
+<script src="$path/static/js/index.js" type="application/javascript"></script>
+<script src="$path/static/js/upload/webuploader.html5only.js" type="text/javascript"></script>
+<script src="$path/static/js/upload/diyUpload.js" type="text/javascript"></script>
+<script src="$path/static/js/upload/upload.js" type="text/javascript"></script>
+<script src="$path/static/js/alert.js" type="text/javascript"></script>
+<script>
+$(function(){
+	$(".datetimepicker").each(function(){
+		$(this).data("DateTimePicker").minDate(new Date());
+	})
+	$('.datetimepicker input').val("");
+	var uuid = $('#uuid').val();
+	//获取页面中隐藏域uuid的value以及被删除文件名
+	$(document).on("click",".diyCancel",function(){
+		var fileName = $(this).prev(".diyFileName").text();
+		jQuery.ajax({
+			async: false,
+			type: "post",
+			url: "$path/messages/deleteMessageFile",
+			dataType: "json",
+			data: {"uuid":uuid,"fileName":fileName},
+			error: function (request) {
+				initAlert(0,"网络错误");
+			},
+			success: function (data) {
+				console.log(data);
+				for(x in data){
+					initAlert(x,data[x]);
+				}
+			}
+		 });
+	})
+})
+var fileArr =[];
+function role(){
+	var checkbox=$("input[type='checkbox']");
+	for(var i=0;i<checkbox.length;i++){
+		var obj=checkbox[i];
+		if(obj.checked==true){
+			var str=$("#"+obj.name).val();
+			if(str!=""){
+				$("#"+obj.name).val(str+","+obj.value);
+			}else{
+				$("#"+obj.name).val(str+obj.value);
+			}
+		}
+	}
+}
+
+function taskSubmit(){
+	var result = formValidation($("#taskForm"));
+	if(!result){
+		return false;
+	}
+	role();
+	var uuidVal = $('#uuid').val();
+	$("#taskFile").val(uuidVal);
+	var taskId = $("#taskId").val();
+	jQuery.ajax({
+	   async: false,
+       type: "post",
+       url: "$path/tasks/taskDispose",
+       data: $('#taskForm').serialize(),
+       dataType: "json",
+       error: function (request) {
+       		initAlert(0,"网络错误");   
+       },
+       success: function (data) {
+			for(x in data){
+       			initAlert(x,data[x]);
+       		}
+       		setTimeout(function(){
+				location.href="$path/tasks/task";
+				$(".nav-dealt-with",parent.document).addClass("selected").siblings().removeClass("selected");
+				$("#mask",parent.document).hide();
+			},2000)
+       	}
+	});
+	return true;
+}
+
+function returnTask(){
+	var result = formValidation($("#returnTaskForm"));
+	if(!result){
+		return false;
+	}
+	jQuery.ajax({
+	   async: false,
+       type: "post",
+       url: "$path/tasks/returnTask",
+       data: $('#returnTaskForm').serialize(),
+       dataType: "json",
+       error: function (request) {
+       		initAlert(0,"网络错误");   
+       },
+       success: function (data) {
+			for(x in data){
+       			initAlert(x,data[x]);
+       		}  
+       		setTimeout(function(){
+       			$(".modal").hide();
+       			$("#mask",parent.document).hide();
+       			setTimeout(function(){
+       				location.href="$path/tasks/task/";
+       				$(".nav-dealt-with",parent.document).addClass("selected").siblings().removeClass("selected");
+       				
+       			},400)
+       		},2000);   		
+       	}
+	});
+}
+
+
+	
+//文件下载
+function downloadTaskFile(id){
+	jQuery.ajax({
+			type: "get",
+			url: "$path/tempTasks/judgeTempTaskFile/"+id,
+			dataType: "json",
+			error: function (request) {
+				initAlert(0,"网络错误");
+			},
+			success: function (data) {
+				for(x in data){
+					if(x == 0){
+						initAlert(x,data[x]);
+					}else{
+						location.href="$path/tasks/downloadTaskFile/" + id;
+					}
+				}
+			}
+		 });
+}
+</script>
+</body>
+</html>

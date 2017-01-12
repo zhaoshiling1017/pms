@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>500 Error</title>
+
+	#parse('common/path-css.vm')
+	
+</head>
+<body>
+<div id="container" class="cls-container">
+	<!-- CONTENT -->
+	<!--===================================================-->
+    	<div class="cls-content" style="height:800px;">
+    		<h1 class="error-code text-danger">500</h1>
+    		<p class="h4 text-thin pad-btm mar-btm">
+    			<i class="fa fa-cog fa-fw"></i>
+    			唉哟，服务器走神了~
+    		</p>
+    		<br>
+    		<p class="h9 text-thin pad-btm mar-btm">
+    			<i class="fa fa-question-circle fa-fw fa-lg"></i>
+    			$!message
+    		</p>
+    	</div>
+</div>
+<!--===================================================-->
+<!-- END OF CONTAINER -->
+#parse('common/path-js.vm')
+</body>
+</html>

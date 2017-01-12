@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<!-- 流程实例DAO -->
+<mapper namespace="com.ducetech.pms.dao.ProcinstDAO">
+	<resultMap type="com.ducetech.pms.model.Procinst" id="procinstMap">
+		<id column="procinst_id" property="procinstId"/>
+	   	<result column="proc_type" property="procType"/>
+	   	<result column="proc_name" property="procName"/>
+	   	<result column="procinst_code" property="procinstCode"/>
+	   	<result column="start_time" property="startTime"/>
+	   	<result column="end_time" property="endTime"/>
+	   	<result column="status" property="status"/>
+	   	<result column="procdef_id" property="procdefId"/>
+	   	<result column="start_person_id" property="startPersonId"/>
+	   	<result column="comment" property="comment"/>
+	   	<result column="start_person_role_id" property="startPersonRoleId"/>
+	   	
+	</resultMap>
+	
+	<!-- 通用查询 -->
+	<select id="selectProcinst" parameterType="com.ducetech.pms.model.Procinst" resultMap="procinstMap">
+		select * from procinst where 1=1 
+			<if test="procType!=null and procType!=''">
+				and proc_type=#{procType}
+			</if>
+			<if test="procName!=null and procName!=''">
+				and proc_name like '%' #{procName} '%'
+			</if>
+			<if test="procinstCode!=null and procinstCode!=''">
+				and procinst_code=#{procinstCode}
+			</if>
+			<if test="status!=null and status!=''">
+				and status=#{status}
+			</if>
+			<if test="procdefId!=null and procdefId!=''">
+				and procdef_id=#{procdefId}
+			</if>
+			<if test="startPersonId!=null and startPersonId!=''">
+				and start_person_id=#{startPersonId}
+			</if>
+			<if test="startTime!=null and startTime!=''">
+				and start_time like #{startTime} '%' 
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+				and substr(start_time,1,19) between #{beginTime} and #{finishTime}
+			</if>
+			ORDER BY procinst_id DESC
+	</select>
+	
+	<!-- 按ID获取流程实例 -->
+	<select id="selectProcinstByprocinstId" resultMap="procinstMap">
+		select * from procinst where procinst_id=#{procinstId} ORDER BY procinst_id DESC
+	</select>
+	
+	<!-- 增加流程实例 -->
+	<insert id="insertProcinst" parameterType="com.ducetech.pms.model.Procinst" useGeneratedKeys="true" keyProperty="procinstId">
+		insert into procinst(procdef_id,proc_type,proc_name,procinst_code,status,start_time,comment,start_person_id,start_person_role_id) 
+		values(#{procdefId},#{procType},#{procName},#{procinstCode},#{status},#{startTime},#{comment},#{startPersonId},#{startPersonRoleId})
+	</insert>
+	
+	<!--更新流程实例 -->
+	<update id="updateProcinst" parameterType="com.ducetech.pms.model.Procinst">
+		update procinst 
+		<set>
+			<if test="procType!=null and procType!=''">
+				proc_type=#{procType},
+			</if>
+			<if test="procName!=null and procName!=''">
+				proc_name=#{procName},
+			</if>
+			<if test="procinstCode!=null and procinstCode!=''">
+				procinst_code=#{procinstCode},
+			</if>
+			<if test="status!=null and status!=''">
+				status=#{status},
+			</if>
+			<if test="procdefId!=null and procdefId!=''">
+				procdef_id=#{procdefId},
+			</if>
+			<if test="startPersonId!=null and startPersonId!=''">
+				start_person_id=#{startPersonId},
+			</if>
+			<if test="endTime!=null and endTime!=''">
+				end_time=#{endTime},
+			</if>
+		</set>
+		where procinst_id=#{procinstId}
+	</update>
+	
+	<!-- 通过角色IDS获取流程实例 -->
+	<select id="selectProcinstByRoleIds" resultMap="procinstMap">
+		select * from procinst where status=#{procinst.status} 
+		<if test="procinst.procdefId!=null and procinst.procdefId!=''">
+			and procdef_id=#{procinst.procdefId} 
+		</if>
+		<if test="procinst.procinstCode!=null and procinst.procinstCode!=''">
+			and procinst_code like '%' #{procinst.procinstCode} '%' 
+		</if>
+		<if test="procinst.procType!=null and procinst.procType!=''">
+			and proc_type=#{procinst.procType}
+		</if>
+		<if test="procinst.procName!=null and procinst.procName!=''">
+			and proc_name like '%' #{procinst.procName} '%' 
+		</if>
+		<if test="procinst.beginTime !=null and procinst.beginTime !=''">
+			and substr(start_time,1,10) between #{procinst.beginTime} and #{procinst.finishTime}
+		</if>
+		and procdef_id in (select f.procdef_id from procdef f,node_role n where f.procdef_id = n.procdef_id 
+		<choose>
+			<when test="roleIds!=null and roleIds.size() > 0">
+				and n.role_id in 
+				<foreach item='item' index='index' collection="roleIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</when>
+			<otherwise>
+				and n.role_id in ('') 
+			</otherwise>
+		</choose>
+		)
+		or (status=#{procinst.status} and proc_type='1' 
+		<choose>
+			<when test="roleIds!=null and roleIds.size() > 0">
+				 and start_person_role_id in 
+				<foreach item='item' index='index' collection="roleIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</when>
+			<otherwise>
+				and start_person_role_id in ('') 
+			</otherwise>
+		</choose>
+		<if test="procinst.procinstCode!=null and procinst.procinstCode!=''">
+			and procinst_code like '%' #{procinst.procinstCode} '%' 
+		</if>
+		<if test="procinst.procType!=null and procinst.procType!=''">
+			and proc_type=#{procinst.procType}
+		</if>
+		<if test="procinst.procName!=null and procinst.procName!=''">
+			and proc_name like '%' #{procinst.procName} '%' 
+		</if>
+		<if test="procinst.beginTime !=null and procinst.beginTime !=''">
+			and substr(start_time,1,10) between #{procinst.beginTime} and #{procinst.finishTime}
+		</if>
+		)
+		or (status=#{procinst.status} and  proc_type='1' and procinst_id in(
+				select DISTINCT(t.procinst_id) from task t where t.status!='2' and t.proc_type='1' 
+		<choose>
+			<when test="roleIds!=null and roleIds.size() > 0">
+				and t.role_id in
+				<foreach item='item' index='index' collection="roleIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</when>
+			<otherwise>
+				and t.role_id in ('') 
+			</otherwise>
+		</choose>
+		or t.task_id in(select a.task_id from assignee a where a.result!='2'
+		<choose>
+			<when test="roleIds!=null and roleIds.size() > 0">
+  				 and a.user_id in 
+				<foreach item='item' index='index' collection="roleIds" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</when>
+			<otherwise>
+				and a.user_id in ('') 
+			</otherwise>
+		</choose>
+		))
+		<if test="procinst.procinstCode!=null and procinst.procinstCode!=''">
+			and procinst_code like '%' #{procinst.procinstCode} '%' 
+		</if>
+		<if test="procinst.procType!=null and procinst.procType!=''">
+			and proc_type=#{procinst.procType}
+		</if>
+		<if test="procinst.procName!=null and procinst.procName!=''">
+			and proc_name like '%' #{procinst.procName} '%' 
+		</if>
+		<if test="procinst.beginTime !=null and procinst.beginTime !=''">
+			and substr(start_time,1,10) between #{procinst.beginTime} and #{procinst.finishTime}
+		</if>
+		)
+		ORDER BY procinst_id DESC
+	</select>
+	
+	
+<!-- 	部门执行统计 -->
+	<select id="selectProcinstByDept" parameterType="com.ducetech.pms.model.Procinst" resultMap="procinstMap">
+			select * from procinst p where 1=1 and  p.procinst_id in(
+				select DISTINCT(t.procinst_id) from task t 
+			where t.dispose_persion_id in (
+				select u.user_id from user u where u.department_id=#{deptId}
+			) 
+			or t.proc_type='1' and t.status='1' and t.task_id in(
+				select a.task_id from assignee a where a.result='1' and a.user_id in(
+					select r.role_id from role r,user_role ur where r.is_deleted=0 and r.role_id=ur.role_id and ur.user_id in (
+						select us.user_id from user us where us.department_id=#{deptId}
+					)
+				)
+			)
+			or t.proc_type='1' and t.status='1' and t.is_back='2' and t.start_dept_id = #{deptId}
+			)  
+			<if test="procType!=null and procType!=''">
+				and proc_type=#{procType}
+			</if>
+			<if test="procName!=null and procName!=''">
+				and proc_name=#{procName}
+			</if>
+			<if test="procinstCode!=null and procinstCode!=''">
+				and procinst_code=#{procinstCode}
+			</if>
+			<if test="status!=null and status!=''">
+				and status=#{status}
+			</if>
+			<if test="procdefId!=null and procdefId!=''">
+				and procdef_id=#{procdefId}
+			</if>
+			<if test="startPersonId!=null and startPersonId!=''">
+				and start_person_id=#{startPersonId}
+			</if>
+			<if test="startTime!=null and startTime!=''">
+				and start_time like #{startTime} '%' 
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+				and substr(start_time,1,19) between #{beginTime} and #{finishTime}
+			</if>
+			ORDER BY procinst_id DESC
+	</select>
+	
+	<select id="selectProcinctCountByName" parameterType="com.ducetech.pms.model.Procinst" resultType="hashMap">
+			select  count(p.proc_name) as num,p.proc_name as name from procinst p where p.procinst_id in(
+				select DISTINCT(t.procinst_id) from task t 
+				where t.dispose_persion_id in (
+					select u.user_id from user u where u.department_id=#{deptId}
+				) 
+				or t.proc_type='1' and t.status='1' and t.task_id in(
+					select a.task_id from assignee a where a.result='1' and a.user_id in(
+						select r.role_id from role r,user_role ur where r.is_deleted=0 and r.role_id=ur.role_id and ur.user_id in (
+							select us.user_id from user us where us.department_id=#{deptId}
+						)
+					)
+				)
+				or t.proc_type='1' and t.status='1' and t.is_back='2' and t.start_dept_id = #{deptId}
+			) and p.proc_type='0' 
+			<if test="procType!=null and procType!=''">
+				and proc_type=#{procType}
+			</if>
+			<if test="status!=null and status!=''">
+				and status=#{status}
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+				and substr(start_time,1,19) between #{beginTime} and #{finishTime}
+			</if>
+			GROUP BY p.proc_name 
+			ORDER BY procinst_id DESC
+	</select>
+	
+	<select id="selectProcinctCountByNameTemp" parameterType="com.ducetech.pms.model.Procinst" resultType="hashMap">
+			select  count(*) as num from procinst  where procinst_id in(
+				select DISTINCT(t.procinst_id) from task t 
+				where t.dispose_persion_id in (
+					select u.user_id from user u where u.department_id=#{deptId}
+				) 
+				or t.proc_type='1' and t.status='1' and t.task_id in(
+						select a.task_id from assignee a where a.result='1' and a.user_id in(
+									select r.role_id from role r,user_role ur where r.is_deleted=0 and r.role_id=ur.role_id and ur.user_id in (
+										select us.user_id from user us where us.department_id=#{deptId}
+									)
+						)
+				)
+				or t.proc_type='1' and t.status='1' and t.is_back='2' and t.start_dept_id = #{deptId}
+			) and proc_type='1'
+			<if test="procType!=null and procType!=''">
+				and proc_type=#{procType}
+			</if>
+			<if test="status!=null and status!=''">
+				and status=#{status}
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+				and substr(start_time,1,19) between #{beginTime} and #{finishTime}
+			</if>
+			ORDER BY procinst_id DESC
+	</select>
+</mapper>

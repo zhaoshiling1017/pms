@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<!-- 流程定义DAO -->
+<mapper namespace="com.ducetech.pms.dao.ProcdefDAO">
+	<resultMap type="com.ducetech.pms.model.Procdef" id="procdefMap">
+		<id column="procdef_id" property="procdefId"/>
+	   	<result column="proc_name" property="procName"/>
+	   	<result column="proc_code" property="procCode"/>
+	   	<result column="proc_type" property="procType"/>
+	   	<result column="create_by_id" property="createById"/>
+	   	<result column="create_at" property="createAt"/>
+	   	<result column="is_deleted" property="isDeleted"/>
+	</resultMap>
+	
+	<!-- 通用查询 -->
+	<select id="selectProcdef" parameterType="com.ducetech.pms.model.Procdef" resultMap="procdefMap">
+		select * from procdef where 1=1 
+			<if test="procName!=null and procName!=''">
+				and proc_name=#{procName}
+			</if>
+			<if test="procCode!=null and procCode!=''">
+				and proc_code=#{procCode}
+			</if>
+			<if test="procType!=null and procType!=''">
+				and proc_type=#{procType}
+			</if>
+			<if test="createById!=null and createById!=''">
+				and create_by_id=#{createById}
+			</if>
+			<if test="createAt!=null and createAt!=''">
+				and create_at=#{createAt}
+			</if>
+			<if test="isDeleted!=null and isDeleted!=''">
+				and is_deleted=#{isDeleted}
+			</if>
+			ORDER BY procdef_id DESC
+	</select>
+	
+	<!-- 按ID获取流程定义 -->
+	<select id="selectProcdefByProcdefId" resultMap="procdefMap">
+		select * from procdef where procdef_id=#{procdefId} ORDER BY procdef_id DESC
+	</select>
+	
+	<!-- 通过登录人ID获取可以发起的流程 -->
+	<select id="selectProcdefsByUserId" resultMap="procdefMap">
+		select * from procdef where is_deleted='0' and procdef_id in(
+			select procdef_id from procdef_role where role_id in(
+				select role_id from user_role where user_id=#{userId}))
+		ORDER BY procdef_id DESC
+	</select>
+</mapper>

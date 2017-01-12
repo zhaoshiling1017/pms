@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.ducetech.pms.dao.MessageDAO">
+	<resultMap type="com.ducetech.pms.model.Message" id="messageMap">
+		<id column="msg_id" property="msgId"/>
+    	<result column="msg_title" property="msgTitle"/>
+    	<result column="content" property="content"/>
+    	<result column="publisher_id" property="publisherId"/>
+    	<result column="publish_time" property="publishTime"/>
+    	<result column="status" property="status"/>
+    	<result column="is_deleted" property="isDeleted"/>
+    	<result column="del_time" property="delTime"/>
+	</resultMap>
+	
+	<select id="selectMessageByRoleIds" resultMap="messageMap">
+		select * from message where 1=1 
+			<if test="message.msgTitle!=null and message.msgTitle!=''">
+				and msg_title=#{message.msgTitle}
+			</if>
+			<if test="message.publisherId!=null and message.publisherId!=''">
+				and publisher_id=#{message.publisherId}
+			</if>
+			<if test="message.isDeleted!=null and message.isDeleted!=''">
+				and is_deleted=#{message.isDeleted}
+			</if>
+			<if test="message.status!=null and message.status!=''">
+				and status=#{message.status}
+			</if>
+			ORDER BY msg_id DESC
+	</select>
+	
+	<select id="selectMessageById" resultMap="messageMap">
+		select * from message where msg_id=#{msgId} ORDER BY msg_id DESC
+	</select> 
+	
+	<insert id="insertMessage" useGeneratedKeys="true" keyProperty="msgId" parameterType="com.ducetech.pms.model.Message">
+			insert into 
+			message(msg_id,msg_title,content,publisher_id,publish_time,status)
+			values(#{msgId},#{msgTitle},#{content},#{publisherId},#{publishTime},#{status})
+	</insert>
+	
+	<update id="updateMessage" parameterType="com.ducetech.pms.model.Message">
+		update message 	
+		<set>
+			<if test="msgTitle !=null and msgTitle !=''">
+				msg_title=#{msgTitle},
+			</if>
+			<if test="content !=null and content !=''">
+				content=#{content},
+			</if>
+			<if test="publisherId !=null and publisherId !=''">
+				publisher_id=#{publisherId},
+			</if>
+			<if test="publishTime !=null and publishTime !=''">
+				publish_time=#{publishTime},
+			</if>
+			<if test="status !=null and status !=''">
+				status=#{status},
+			</if>
+			<if test="isDeleted !=null and isDeleted !=''">
+				is_deleted=#{isDeleted},
+			</if>
+			<if test="delTime !=null and delTime !=''">
+				del_time=#{delTime},
+			</if>
+		</set>
+		where msg_id=#{msgId}
+	</update>
+	
+	<update id="deleteMessage" parameterType="com.ducetech.pms.model.Message">
+		update message set is_deleted=#{isDeleted},del_time=#{delTime} where msg_id=#{msgId}
+	</update>
+	
+</mapper>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>定时消息</title>
+	#parse('common/path-css.vm')
+</head>
+<body>
+<div class="wrapper">
+    <!--planel-->
+    <div class="panel">
+        <!--planel-head-->
+        <div class="panel-head">
+            <h4>定时消息</h4>
+            <a href="javascript:void(0);" class="btn btn-back">返回</a>
+        </div>
+        <!--planel-body-->
+        <div class="panel-body padding-10">
+            <form action="#">
+                <div class="the-information-input">
+                    <div class="row clear mar-top-10 pos-relative">
+                        <label for="choose-process" class="red-star">选择流程：</label>
+                        <select type="text"  class="changed-width reset-input" id="choose-process">
+                            <option value="0">请选择</option>
+                            <option value="1">流程1</option>
+                            <option value="2">流程2</option>
+                            <option value="3">流程3</option>
+                        </select>
+                    </div>
+                    <div class="row clear mar-top-10">
+                        <label for="regulations-time" class="red-star">重复类型：</label>
+                        <select name="regulations-time" id="regulations-time" class="reset-input">
+                            <option value="0">请选择</option>
+                            <option value="1">2016-09-10 13:23:24</option>
+                            <option value="2">2016-09-10 13:23:24</option>
+                            <option value="3">2016-09-10 13:23:24</option>
+                            <option value="4">2016-09-10 13:23:24</option>
+                        </select>
+                        <span class="mar-left-10 gray-font">一次  重复</span>
+                    </div>
+                    <div class="row clear mar-top-10">
+                        <label for="time-setup" class="red-star">定时设置：</label>
+                        <select name="regulations-time" id="time-setup" class="reset-input">
+                            <option value="0">请选择</option>
+                            <option value="1">2016-09-10 13:23:24</option>
+                            <option value="2">2016-09-10 13:23:24</option>
+                            <option value="3">2016-09-10 13:23:24</option>
+                            <option value="4">2016-09-10 13:23:24</option>
+                        </select>
+                        <span class="mar-left-10 gray-font">选择时间精确到秒</span>
+                    </div>
+                    <div class="row clear mar-top-10">
+                        <label for="remark">备注：</label>
+                        <textarea name="remark" id="remark" class="changed-width" rows="10" placeholder="请输入"></textarea>
+                    </div>
+                    <div class="footer btn-group mar-top-10">
+                        <button type="reset" class="btn btn-cancel">重置</button>
+                        <a class="btn btn-primary" href="javascript:void(0)">保存</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="$path/static/js/jquery.min.js" type="application/javascript"></script>
+<script src="$path/static/js/index.js" type="application/javascript"></script>
+</body>
+</html>

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>普通任务-流程详情</title>
+  	#parse('common/path-css.vm')
+	<link rel="stylesheet" href="$path/static/css/webuploader.css">
+    <link rel="stylesheet" href="$path/static/css/diyUpload.css">
+  	<script src="$path/static/js/jquery.min.js" type="application/javascript"></script>
+    <script src="$path/static/js/upload/webuploader.html5only.js" type="text/javascript"></script>
+    <script src="$path/static/js/upload/diyUpload.js" type="text/javascript"></script>
+    <script src="$path/static/js/main.js" type="text/javascript"></script>
+	<script src="$path/static/js/index.js" type="application/javascript"></script>
+	<script src="$path/static/js/alert.js" type="application/javascript"></script>
+</head>
+<body>
+<div class="wrapper weight-bold">
+    <!--planel-->
+    <div class="panel">
+        <!--planel-head-->
+        <div class="panel-head">
+            <div class="left mar-left-10">
+                <h4 class="has-link">普通任务</h4>
+                <b class="blue-font">流程详情</b>
+            </div>
+			#if($!pageType=='0')
+				<a href="$path/main" class="btn btn-back" target="myiframe">返回</a>
+			#elseif($!pageType=='11' || $!pageType=='12')
+				<a href="$path/tasks/task" class="btn btn-back" target="myiframe">返回</a>
+			#elseif($!pageType=='2')
+				<a href="$path/tasks/relate" class="btn btn-back" target="myiframe">返回</a>
+			#elseif($!pageType=='3')
+				<a href="$path/statistics/progress" class="btn btn-back" target="myiframe">返回</a>	
+			#elseif($!pageType=='4')
+				<a href="$path/statistics/launchStati" class="btn btn-back" target="myiframe">返回</a>
+			#elseif($!pageType=='5')
+				<a href="$path/statistics/deptStati" class="btn btn-back" target="myiframe">返回</a>
+			#elseif($!pageType=='6')
+				<a href="$path/notices/notice" class="btn btn-back" target="myiframe">返回</a>
+			#end
+        </div>
+        <!--planel-body-->
+        <div class="panel-body padding-10">
+            <h3 class="table-title">流程图</h3>
+            <!--process-picture-->
+            <div class="border-all process-picture">
+            	<div class="process-dis clear">
+            		<span><em class="bg0"></em>未到达</span>
+            		<span><em class="bg1"></em>已完成</span>
+            		<span><em class="bg2"></em>未完成</span>
+            		<span><em class="bg3"></em>正在进行</span>
+            	</div>
+            	<div class="flow-char flow-normal"></div>
+            </div>
+            <!--planel-bottom-->
+            <div class="clear panel-bottom mar-top-30 around-layout">
+				<input type="hidden" value="$!procinst.procdefId" id="procdefId"/>
+				<input type="hidden" value="$!procinst.procinstId" id="procinstId"/>
+				<input type="hidden" name="uuid" id='uuid' value="$!uuid" data-url="$path/file/upload/">
+                <div class="left">
+                    <div class="mar-left-10">
+                        <h3 class="table-title">基本信息</h3>
+                        <div class="the-information-list border-all indent-span height-mark1-anchor">
+                            <p>
+                                <label>流程编号</label>
+                                <span>$!procinst.procinstCode</span>
+                            </p>
+                            <p>
+                                <label>流程名称</label>
+                                <span>$!procinst.procName</span>
+                            </p>
+							<p>
+                                <label>流程类型</label>
+								#if($!procinst.procType=='0')
+                                    <span>普通流程</span>
+								#elseif($!procinst.procType=='1')
+                                    <span>临时流程</span>
+								#end
+                            </p>
+							<p>
+								<label>发起人</label>
+								<span>$!procinst.startPerson.name</span>
+                            </p>
+                            <p>
+                                <label>发起时间</label>
+                                <span>$!procinst.startTime</span>
+                            </p>
+                            <p>
+                                <label>流程状态</label>
+								#if($!procinst.status=='0')
+									#if($!procinst.nodeNames)
+									<span>未完成 [$!procinst.nodeNames]</span>
+									#else
+									<span>未完成</span>
+									#end
+								#elseif($!procinst.status=='1')
+									<span>已完成</span>
+								#elseif($!procinst.status=='2')
+									<span>已作废</span>
+								#end
+                            </p>
+                            <p>
+                                <label>结束时间</label>
+                                <span>$!procinst.endTime</span>
+                            </p>
+							<p>
+                                <label>流程备注</label>
+                                <span>$!procinst.comment</span>
+                            </p>
+                            <p>
+                                <label>附件</label>
+                                <span><a class="enclosure" href="javascript:;">查看附件</a></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="right">
+                    <div class="mar-left-10">
+                        <h3 class="table-title">流转记录</h3>
+                        <div class="height-mark1 border-all">
+                            <!-- stripe table -->
+                            <table class="table table-stripe">
+                                <thead>
+                                <tr>
+    								<th>节点名称</th>
+                                    <th>处理节点</th>
+                                    <th>动作</th>
+                                    <th>处理人</th>
+                                    <th>处理时间</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+    							#foreach($task in $tasks)
+                                <tr>
+                                    <td title="$!task.upTask.nodeName ($!task.upTask.role.roleName)">
+										#if($!task.upTask.nodeName)
+											$!task.upTask.nodeName ($!task.upTask.role.roleName)
+										#end
+									</td>
+                                    <td title="$!task.nodeName ($!task.role.roleName)">$!task.nodeName ($!task.role.roleName)</td>
+    								<td>
+    									#if($!task.nodeType=='0')
+    										提交
+    									#else
+    										#if($!task.isBack=='0')
+    											提交
+    										#else
+    											退回
+    										#end
+    									#end
+									</td>
+                                    <td title="$!task.disposePersion.name">$!task.disposePersion.name</td>
+                                    <td title="$!task.disposeTime">$!task.disposeTime</td>
+                                </tr>
+    							#end
+                                </tbody>
+							</table>
+                            <!-- end -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 附件详情 -->
+<!--modal-->
+<div class="modal" id="enclosure">
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <h3 class="left weight-bold blue-font">附件详情</h3>
+            <a href="javascript:void(0)" class="icon-delete right"></a>
+        </div>
+        <div class="modal-body min-height">
+        	#if($!pageType=='11')
+            <div class="upload-container">
+        		<span class="icon icon-pin"></span>
+        		<span id="upload">附件上传</span>
+    		</div>
+			#end
+           <table class="table table-stripe">
+                <thead>
+                   <tr>
+                        <th>附件名称</th>
+                        <th>上传时间</th>
+                        <th>上传人</th>
+                        <th>是否退回</th>
+                        <th>操作</th>
+                	</tr>
+                </thead>
+                <tbody>
+	                #foreach($procinstFile in $procinstFiles)
+	                  <tr>
+	                  	<td style="display:none"><input type="hidden" id="fileTaskId" value="$!task.taskId"></td>
+	                    <td title="$!procinstFile.fileName">$!procinstFile.fileName</td>
+	                    <td title="$!procinstFile.uploadTime">$!procinstFile.uploadTime</td>
+	                    <td title="$!procinstFile.uploadPerson.name">$!procinstFile.uploadPerson.name</td>
+	                    #if($!procinstFile.isBack==0)
+	                    	<td title="否">否</td>
+	                    #else
+	                    	<td title="是">是</td>
+	                    #end
+	                    <td>
+	                         <a href="javascript:void(0);" onclick="downloadTaskFile($!procinstFile.procinstFileId);">下载</a>
+	                    </td>
+	                </tr>
+	                #end
+                </tbody>
+			</table>
+			
+        </div>
+        <div class="modal-footer  clear">
+            <div class="btn-group">
+            	#if($!pageType=='11')
+                <a href="javascript:;" class="btn btn-warn" onclick="addFile($!procinst.procinstId)">保存</a>
+                #end
+                <a href="javascript:void(0)" class="btn btn-primary disappear-modal">取消</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+var fileArr =[];
+$(function(){ 
+	var procinstId = $("#procinstId").val();
+	var procdefId = $("#procdefId").val();
+	getProcdefData(procdefId);
+	getUnNodeData(procinstId, procdefId);
+	var uuid = $('#uuid').val();
+	//获取页面中隐藏域uuid的value以及被删除文件名
+	$(document).on("click",".diyCancel",function(){
+		var fileName = $(this).prev(".diyFileName").text();
+		jQuery.ajax({
+			async: false,
+			type: "post",
+			url: "$path/messages/deleteMessageFile",
+			dataType: "json",
+			data: {"uuid":uuid,"fileName":fileName},
+			error: function (request) {
+				initAlert(0,"网络错误");
+			},
+			success: function (data) {
+				console.log(data);
+				for(x in data){
+					initAlert(x,data[x]);
+				}
+			}
+		 });
+	})
+	//查看附件
+	$(".enclosure").click(function(){
+		$("#enclosure").show();
+		$("#mask",parent.document).show();
+		$('#upload').diyUpload({
+	        url:'$path/file/upload/'+ uuid,
+	        success:function( data ) {
+	        },
+	        error:function( err ) {
+	            console.info( err );
+	        },
+	        buttonText : '附件上传',
+	        threads:1,   //上传并发数
+	        accept: {}
+	    });
+	});
+});
+
+function addFile(procinstId){
+	var uuid = $('#uuid').val();
+	jQuery.ajax({
+		type: "post",
+		url: "$path/tasks/uploadTaskFile",
+		dataType: "json",
+		data: { "file": JSON.stringify(fileArr), "procinstId":procinstId, "type":"0", "uuid":uuid },
+		error: function (request) {
+			initAlert(0,"网络错误");  
+		},
+		success: function (data) {
+			for(x in data){
+				initAlert(x,data[x]);
+			}
+			$("#mask",parent.document).hide();
+			window.location.reload();
+		}
+	});
+}
+
+//文件下载
+function downloadTaskFile(id){
+	jQuery.ajax({
+			type: "get",
+			url: "$path/tempTasks/judgeTempTaskFile/"+id,
+			dataType: "json",
+			error: function (request) {
+				initAlert(0,"网络错误");
+			},
+			success: function (data) {
+				for(x in data){
+					if(x == 0){
+						initAlert(x,data[x]);
+					}else{
+						location.href="$path/tasks/downloadTaskFile/"+id;
+					}
+				}
+			}
+		 });
+}
+
+function getUnNodeData(procinstId,procdefId){
+	jQuery.ajax({
+	   async: false,
+       type: "post",
+       url: "$path/tasks/getUnNodeData",
+       data: {"procinstId":procinstId, "procdefId":procdefId},
+       dataType: "json",
+       error: function (request) {
+       		initAlert(0,"网络错误");   
+       },
+       success: function (data) {
+	   		for(nodeId in data){
+	   			$(".flow-normal [data-nodeId='"+ nodeId +"']").addClass("bg"+data[nodeId]);
+	   		}
+       	}
+	});
+}
+
+function getProcdefData(procdefId){
+	jQuery.ajax({
+	   async: false,
+       type: "post",
+       url: "$path/tasks/getProcdefData",
+       data: {"procdefId":procdefId},
+       dataType: "json",
+       error: function (request) {
+       		initAlert(0,"网络错误"); 
+       },
+       success: function (data) {
+			var str = '<div class="line"></div><span>开始</span>';
+			var arr = [];	
+			var nextNode = 0;
+			for(var j=0;j<data.length;j++){
+				if(data[j].upNodeId == nextNode){
+					str += '<label data-nodeId="node'+ data[j].nodeId +'">'+ data[j].nodeName +'</label>';
+					nextNode = data[j].nextNodeId;
+					data.splice(j,1);
+					break;
+				}
+			}
+			for(var i=0;i<data.length;i++){
+				console.log(data);
+				for(var j=0;j<data.length;j++){
+					if(data[j].nodeId == nextNode){
+						console.log(nextNode);
+						str += '<label data-nodeId="node'+ data[j].nodeId +'" code="'+ data[j].nodeType +'">'+ data[j].nodeName +'</label>';
+						nextNode = data[j].nextNodeId;
+						//data.splice(j,1);
+						if(nextNode.length>2){
+							arr = nextNode.split(",");
+							str += '<div class="span-par span-par'+ arr.length +'" style="margin-top:-'+ 50*((arr.length-1)/2) +'px">';
+							for(var n=0;n<arr.length;n++){
+								for(var m=0;m<data.length;m++){
+									if(data[m].nodeId == arr[n]){
+										str += '<span data-nodeid="node'+ data[m].nodeId +'" data-nextNodeId="'+ data[m].nextNodeId +'">'+ data[m].nodeName +'</span>';
+										break;
+									}
+								}
+							}
+							str += '</div>';
+						}
+						//break;
+					}
+				}
+			}
+			str += '<span>结束</span>';
+			$(".flow-char").append(str);
+			//将下一节点是结束的节点放在第二位
+			var endSpan = $("[data-nextNodeId='-1']");
+			if(endSpan.index() == 0){//如果是在第一个的位置
+				console.log(endSpan.index())
+				$(".span-par span").eq(1).after(endSpan);
+			}else if(endSpan.index() != 1){//不在第二位
+				$(".span-par span:first").after(endSpan);
+			}
+			
+			//设置流程图的容器宽度
+			var conL = $(".flow-char").contents().length-1;
+			var W = 140*(conL-4) + 30*(conL-3) + 250;
+			$(".flow-normal").width(W);
+			//给当前所到节点加菱形块背景
+			$(".flow-normal [code='1']").addClass("antzone bg0");
+       	}
+	});
+}
+</script>
+</body>
+</html>

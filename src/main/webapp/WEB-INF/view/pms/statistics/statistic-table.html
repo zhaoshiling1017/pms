@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="css/font.css" type="text/css">
+    <link rel="stylesheet" href="css/normalize.css" type="text/css">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <script src="js/jquery.min.js" type="text/javascript"></script>
+    <script src="js/Chart.js" type="text/javascript"></script>
+    <script src="js/initChart.js" type="text/javascript"></script>
+    <style>
+        .chart {
+            padding: 20px;
+            width: 800px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chart">
+        <canvas id="myChart" width="600" height="400"></canvas>
+        <ul class="legend">
+            <li>
+                <span class="color-bar maximum"></span>最大值
+            </li>
+            <li>
+                <span class="color-bar primary"></span>普通值
+            </li>
+            <li>
+                <span class="color-bar minimum"></span>最小值
+            </li>
+            <!--<span class="color-bar"></span><span>最大值</span>-->
+            <!--<span class="color-bar"></span><span>普通值</span>-->
+            <!--<span class="color-bar"></span><span>最小值</span>-->
+        </ul>
+    </div>
+    <div class="chart">
+        <canvas id="myChart1" width="600" height="400"></canvas>
+        <ul class="legend">
+            <li>
+                最大值<i class="legend-label">4</i>
+            </li>
+            <li>
+                平均值<i class="legend-label">1.6</i>
+            </li>
+            <li>
+                最小值<i class="legend-label">0</i>
+            </li>
+        </ul>
+    </div>
+    <div class="chart">
+        <canvas id="myChart3" width="600" height="400"></canvas>
+    </div>
+</body>
+</html>

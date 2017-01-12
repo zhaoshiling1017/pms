@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<!-- 工单DAO -->
+<mapper namespace="com.ducetech.pms.dao.TaskLogDAO">
+	<resultMap type="com.ducetech.pms.model.TaskLog" id="taskLogMap">
+		<id column="id" property="id"/>
+		<result column="task_id" property="taskId"/>
+	   	<result column="node_name" property="nodeName"/>
+	   	<result column="person" property="person"/>
+	   	<result column="node_time" property="nodeTime"/>
+	   	<result column="procinst_id" property="procinstId"/>
+	   	<result column="node_role" property="nodeRole"/>
+	   	<result column="node_handle" property="nodeHandle"/>
+	   	<result column="node_action" property="nodeAction"/>
+	   	<result column="up_task_id" property="upTaskId"/>
+	</resultMap>
+	
+	<!-- 新增 -->
+	<insert id="insertTaskLog" parameterType="com.ducetech.pms.model.TaskLog" useGeneratedKeys="true" keyProperty="id">
+		insert into task_log(task_id,up_task_id,node_name,person,node_time,procinst_id,node_role,
+		node_handle,node_action)
+		values(#{taskId},#{upTaskId},#{nodeName},#{person},#{nodeTime},#{procinstId},#{nodeRole},
+		#{nodeHandle},#{nodeAction})
+	</insert>
+
+	<!-- 通用查询 -->
+	<select id="selectTaskLog" parameterType="com.ducetech.pms.model.Task" resultMap="taskLogMap">
+		select * from task_log where 1=1 
+			<if test="taskId !=null and taskId !=''">
+				and task_id=#{taskId}
+			</if>
+			<if test="nodeName !=null and nodeName !=''">
+				and node_name=#{nodeName}
+			</if>
+			<if test="person !=null and person !=''">
+				and person=#{person}
+			</if>
+			<if test="nodeTime !=null and nodeTime !=''">
+				and node_time=#{nodeTime}
+			</if>
+			<if test="procinstId !=null and procinstId !=''">
+				and procinst_id=#{procinstId}
+			</if>
+			<if test="nodeRole !=null and nodeRole !=''">
+				and node_role=#{nodeRole}
+			</if>
+			<if test="nodeHandle !=null and nodeHandle !=''">
+				and node_handle=#{nodeHandle}
+			</if>
+			<if test="nodeAction !=null and nodeAction !=''">
+				and node_action=#{nodeAction}
+			</if>
+	</select>
+	
+</mapper>

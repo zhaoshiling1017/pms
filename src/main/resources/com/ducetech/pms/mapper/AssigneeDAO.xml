@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.ducetech.pms.dao.AssigneeDAO">
+	<resultMap type="com.ducetech.pms.model.Assignee" id="assigneeMap">
+		<id column="assignee_id" property="assigneeId"/>
+    	<result column="task_id" property="taskId"/>
+    	<result column="user_id" property="userId"/>
+    	<result column="result" property="result"/>
+    	<result column="comment" property="comment"/>
+    	<result column="suggest_time" property="suggestTime"/>
+    	<result column="suggest_id" property="suggestId"/>
+	</resultMap>
+	
+	<insert id="insertAssignee" useGeneratedKeys="true" keyProperty="msgId" parameterType="com.ducetech.pms.model.Assignee">
+			insert into 
+			assignee(assignee_id,task_id,user_id,result,comment)
+			values(#{assigneeId},#{taskId},#{userId},#{result},#{comment})
+	</insert>
+	
+	<update id="updateAssignee" parameterType="com.ducetech.pms.model.Assignee">
+		update assignee set result=#{result},comment=#{comment},suggest_time=#{suggestTime},suggest_id=#{suggestId} where assignee_id=#{assigneeId}
+	</update>
+	
+	<select id="selectAssigneeByResult" resultMap="assigneeMap" parameterType="com.ducetech.pms.model.Assignee">
+		select * from assignee where 1=1 
+			<if test="result !=null and result !=''">
+				and result=#{result}
+			</if>
+			<if test="taskId !=null and taskId !=''">
+				and task_id=#{taskId}
+			</if>
+			ORDER BY assignee_id DESC
+	</select>
+	
+	<select id="selectAssigneeByRoleIds" resultMap="assigneeMap">
+		select * from assignee where 1=1 
+			<if test="assignee.taskId !=null and assignee.taskId !=''">
+				and task_id=#{assignee.taskId}
+			</if>
+			<choose>
+				<when test="userIds !=null and userIds.size() > 0">
+					and user_id in  
+					<foreach item='item' index='index' collection="userIds" open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</when>
+				<otherwise>
+					and userId in ('') 
+				</otherwise>
+			</choose>
+			ORDER BY assignee_id DESC
+	</select>
+	
+	<select id="selectAssigneeByTaskId" resultMap="assigneeMap" parameterType="String">
+		select * from assignee where 1=1 
+			<if test="taskId !=null and taskId !=''">
+				and task_id=#{taskId}
+			</if>
+			ORDER BY assignee_id DESC
+	</select>
+	<select id="selectAssigneeById" resultMap="assigneeMap" parameterType="String">
+		select * from assignee where assignee_id=#{id} ORDER BY assignee_id DESC
+	</select>
+</mapper>

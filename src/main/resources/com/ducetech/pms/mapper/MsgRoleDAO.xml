@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.ducetech.pms.dao.MsgRoleDAO">
+	<resultMap type="com.ducetech.pms.model.MsgRole" id="msgRoleMap">
+		<id column="id" property="id"/>
+    	<result column="msg_id" property="msgId"/>
+    	<result column="role_id" property="roleId"/>
+    	<result column="user_id" property="userId"/>
+    	<result column="user_name" property="userName"/>
+    	<result column="status" property="status"/>
+    	<result column="read_time" property="readTime"/>
+    	<result column="is_deleted" property="isDeleted"/>
+    	<result column="del_time" property="delTime"/>
+	</resultMap>
+	
+	<!-- 通用查询 -->
+	<select id="selectMsgRoles" parameterType="com.ducetech.pms.model.MsgRole" resultMap="msgRoleMap">
+		select * from msg_role where 1=1
+			<if test="msgRole.msgId!=null and msgRole.msgId!=''">
+				and msg_id=#{msgRole.msgId}
+			</if>
+			<if test="msgRole.userName!=null and msgRole.userName!=''">
+				and user_name=#{msgRole.userName}
+			</if>
+			<if test="msgRole.status!=null and msgRole.status!=''">
+				and status=#{msgRole.status}
+			</if>
+			<if test="msgRole.readTime!=null and msgRole.readTime!=''">
+				and read_time=#{msgRole.readTime}
+			</if>
+			<if test="msgRole.isDeleted!=null and msgRole.isDeleted!=''">
+				and is_deleted=#{msgRole.isDeleted}
+			</if>
+			<if test="userId!=null and userId!=''">
+				and user_id=#{userId}
+			</if>
+			ORDER BY id DESC
+	</select>
+	
+<!-- 	根据id查找对象 -->
+	<select id="selectMsgRoleById" resultMap="msgRoleMap">
+		select * from msg_role where is_deleted='0' and id=#{id} ORDER BY id DESC
+	</select>
+	
+	<!-- 	根据msgId查找对象 -->
+	<select id="selectMsgRoleByMsgId" resultMap="msgRoleMap">
+		select * from msg_role where is_deleted='0'  and msg_id=#{msgId} ORDER BY id DESC
+	</select>
+	
+<!-- 	新增用户角色消息 -->
+	<insert id="addMsgRole" useGeneratedKeys="true" keyProperty="id" parameterType="com.ducetech.pms.model.MsgRole">
+			insert into 
+			msg_role(id,msg_id,role_id,user_id,user_name,status,read_time)
+			values(#{id},#{msgId},#{roleId},#{userId},#{userName},#{status},#{readTime})
+	</insert>
+	
+<!-- 	更新以读未读状态 -->
+	<update id="updateMsgRole" parameterType="com.ducetech.pms.model.MsgRole">
+		update msg_role set 
+		status=#{status},read_time=#{readTime} 
+		where id=#{id} and status='0' and is_deleted='0'
+	</update>
+
+	<update id="deleteMsgRole" parameterType="com.ducetech.pms.model.MsgRole">
+		update msg_role set 
+		is_deleted=#{isDeleted},del_time=#{delTime} 
+		where id=#{id} and is_deleted='0'
+	</update>
+	
+</mapper>

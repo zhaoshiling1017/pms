@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>通讯公司进度管理系统</title>
+    #parse('common/path-css.vm')
+    <script src="$path/static/js/jquery.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="$path/static/css/webuploader.css">
+    <link rel="stylesheet" href="$path/static/css/diyUpload.css">
+    <script src="$path/static/js/upload/webuploader.html5only.js" type="text/javascript"></script>
+    <script src="$path/static/js/upload/diyUpload.js" type="text/javascript"></script>
+</head>
+<body>
+	<div class="row clear mar-top-10">
+    	<div class="upload-container" style="margin-left:80px;">
+            <span class="icon icon-pin"></span>
+            <span id="upload">文件上传</span>
+        </div>
+    </div>
+<script>
+ $(function() {
+        //上传文件
+        $('#upload').diyUpload({
+            url:'$path/file/upload',
+            success:function( data ) {
+                console.info( data );
+            },
+            error:function( err ) {
+                console.info( err );
+            },
+            buttonText : '上传',
+            threads:1,   //上传并发数
+            fileNumLimit:50,
+            fileSizeLimit:500000 * 1024,
+            accept: {}
+        });
+    });
+</script>
+</body>
+</html>

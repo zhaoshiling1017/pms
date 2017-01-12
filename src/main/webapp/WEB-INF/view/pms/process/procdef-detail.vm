@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>流程详情</title>
+    #parse('common/path-css.vm')
+    <script src="$path/static/js/jquery.min.js" type="text/javascript"></script>
+    <script src="$path/static/js/main.js" type="text/javascript"></script>
+    <script src="$path/static/js/index.js" type="text/javascript"></script>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="panel">
+            <div class="panel-head">
+                <h4>流程维护<b class="join">-</b><b class="title-child">流程详情</b></h4>
+                <a href="$path/procdefs/process" target="myiframe" class="btn btn-back">返回</a>
+            </div>
+            <div class="panel-body">
+                <div class="control-condition">
+                    <span class="info-group">
+                        <b>流程编码：</b><b>HC00120</b>
+                    </span>
+                    <span class="info-group">
+                        <b>流程名称：</b><b>施工计划审批</b>
+                    </span>
+                    <span class="info-group">
+                        <b>创建时间：</b><b>2016-08-20 13:23:21</b>
+                    </span>
+                    <span class="info-group">
+                        <b>创建人：</b><b>陈硕峰</b>
+                    </span>
+                    <div class="btn-group">
+                    	#if($shiro.hasPermission("流程详情-新增"))
+                        <a href="javascript:void(0);" class="btn-icon danger" data-modal="process-add">
+                            <i class="icon-cross"></i>
+                            <span>新增</span>
+                        </a>
+                        #end
+                        <a href="javascript:void(0);" class="btn-icon">
+                            <i class="icon-refresh"></i>
+                            <span>刷新</span>
+                        </a>
+                    </div>
+                </div>
+                <!-- checkbox table -->
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>节点名称</th>
+                            <th>流转类型</th>
+                            <th>节点类型</th>
+                            <th>是否限时</th>
+                            <th>上一节点名称</th>
+                            <th>下一节点名称</th>
+                            <th>创建时间</th>
+                            <th>创建人</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>安质部</td>
+                            <td>正常</td>
+                            <td>起始节点</td>
+                            <td>是</td>
+                            <td>-</td>
+                            <td>项目部</td>
+                            <td>2016-08-20 13:23:21</td>
+                            <td>陈硕峰</td>
+                            <td>
+                                <a href="javascript:void(0);" data-modal="node-detail">详情</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>项目部</td>
+                            <td>正常</td>
+                            <td>普通节点</td>
+                            <td>否</td>
+                            <td>安质部</td>
+                            <td>安质部</td>
+                            <td>2016-08-20 13:23:21</td>
+                            <td>陈硕峰</td>
+                            <td>
+                                <a href="javascript:void(0);" data-modal="node-detail">详情</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>安质部</td>
+                            <td>审批</td>
+                            <td>起始节点</td>
+                            <td>是</td>
+                            <td>项目部</td>
+                            <td>生产调度室</td>
+                            <td>2016-08-20 13:23:21</td>
+                            <td>陈硕峰</td>
+                            <td>
+                                <a href="javascript:void(0);" data-modal="node-detail">详情</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>安质部</td>
+                            <td>正常</td>
+                            <td>起始节点</td>
+                            <td>是</td>
+                            <td>-</td>
+                            <td>项目部</td>
+                            <td>2016-08-20 13:23:21</td>
+                            <td>陈硕峰</td>
+                            <td>
+                                <a href="javascript:void(0);" data-modal="node-detail">详情</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="table-footer">
+                    <ul class="list-pagination">
+                        <li>
+                            <a href="javascript:void(0);" class="icon-left-triangle"></a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0);" class="active">1</a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0);">2</a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0);">3</a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0);">4</a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0);">...</a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0);">26</a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0);" class="icon-right-triangle"></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal-->
+    <div class="modal" id="node-detail">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="left weight-bold blue-font">节点详情</h3>
+                <a href="javascript:void(0)" class="icon-delete right"></a>
+            </div>
+            <div class="modal-body min-height">
+                <div class="the-information-list">
+                    <p class="row clear mar-top-10">
+                        <label>节点名称：</label>
+                        <b>安质部</b>
+                    </p>
+                    <p class="row clear mar-top-20">
+                        <label>流程类型：</label>
+                        <b>正常</b>
+                    </p>
+                    <div class="row clear mar-top-20">
+                        <label>节点类型：</label>
+                        <b>起始节点</b>
+                    </div>
+                    <div class="row clear mar-top-20">
+                        <label>是否限时：</label>
+                        <b>是</b>
+                    </div>
+                    <div class="row clear mar-top-20">
+                        <label>选择角色：</label>
+                        <b>办公室主任 、科长 、科员</b>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer  clear">
+                <div class="btn-group">
+                    <a href="javascript:void(0)" class="btn btn-primary">确定</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--modal-->
+    <div class="modal" id="process-add">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="left weight-bold blue-font">流程新增</h3>
+                <a href="javascript:void(0)" class="icon-delete right"></a>
+            </div>
+            <div class="modal-body min-height">
+                <div class="the-information-input the-information-list">
+                    <p class=" row clear">
+                        <label for="process-name" class="red-star">流程名称：</label>
+                        <input type="text" placeholder="请输入" id="process-name" name="process-name"
+                               class=" reset-input">
+                    </p>
+                    <p class="row clear">
+                        <label for="process-number" class="red-star">流程编号：</label>
+                        <input type="text" placeholder="请输入" id="process-number" name="process-number"
+                               class=" reset-input">
+                    </p>
+                    <div class="row clear">
+                        <label for="promoter">发起人：</label>
+                        <div class="left dropDown Multiselect" id="promoter">
+                            <ul class="select-drop clear"></ul>
+                            <ul class="can-select">
+                                <li class="clear">
+                                    <input type="checkbox" class="select-all-items"/>
+                                    <label>全选</label>
+                                </li>
+                                <li class="clear">
+                                    <input type="checkbox" checked/>
+                                    <label>项目1部经理</label>
+                                </li>
+                                <li class="clear">
+                                    <input type="checkbox" checked/>
+                                    <label>项目2部经理</label>
+                                </li>
+                                <li class="clear">
+                                    <input type="checkbox"/>
+                                    <label>项目3部经理</label>
+                                </li>
+                                <li class="clear">
+                                    <input type="checkbox"/>
+                                    <label>项目4部经理</label>
+                                </li>
+                            </ul>
+                            <span class="icon-lower-triangle"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer  clear">
+                <div class="btn-group">
+                    <a href="javascript:void(0)" class="btn btn-warn">保存</a>
+                    <a href="javascript:void(0)" class="btn btn-primary disappear-modal">取消</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

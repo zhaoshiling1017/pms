@@ -1,0 +1,227 @@
+#parse('common/path-css.vm')
+
+<!-- PAGE TITTLE -->
+<!--===================================================-->
+
+<!--===================================================-->
+<!-- END OF PAGE TITLE -->
+
+<!-- PAGE CONTENT -->
+<!--===================================================-->
+    <div class="panel" style="height:800px;-webkit-box-shadow:none;box-shadow:none;">
+    	<div class="panel-heading" >
+            <div class="panel-control">
+            	<button onclick="location.reload()" class="demo-panel-ref-btn btn btn-primary btn-labeled fa fa-refresh"
+                        data-target="#demo-panel-ref"
+                        data-toggle="panel-overlay">
+                    	刷新
+                </button>
+                <button type="button" onclick="location.href ='$path/plan/planYear/addPage'" class="btn btn-primary btn-labeled fa fa-plus" >新增</button> 
+                <!--<button id="demo-print-row" class="btn btn-primary btn-labeled fa fa-print" onclick="planYearPrint('5')">打印</button>-->
+				<button id="demo-print-row" class="btn btn-primary btn-labeled fa fa-share" onclick="planYearExport();">导出</button>
+        		<button type="button" onclick="testWebSocket()" class="btn btn-primary btn-labeled fa fa-search">查询</button>
+            </div>
+            <h3 class="panel-title">计划大表编制</h3>
+        </div>
+        <div class="panel-body" style="padding-left:25px;padding-right:25px;padding-top:10px;">
+            <!--NO LABEL FORM-->
+            <!--===================================================-->     
+            <form class="form-horizontal" id="planYearSearchForm">
+                <div class="row">
+					<div class="col-md-2 mar-btm">
+                        <label class="control-label">所属年份</label>
+                        <select name="name" class="form-control">
+							<option>张</option>
+                            <option>2015年</option>
+                            <option value="2016">2016年</option>
+                            <option>2017年</option>
+                        </select>
+                    </div>
+                </div>
+        	</form>
+			<!--===================================================-->
+	        <!--END OF NO LABEL FORM-->
+	        <!--START OF DATA TABLE-->
+			<!--===================================================-->
+	       <table class="table-bordered" id="planYearTable"></table>
+			<!--===================================================-->
+			<!--END OF DATA TABLE-->           
+        </div>
+    </div>
+<!--===================================================-->
+<!-- END OF PAGE CONTENT -->
+
+#parse('common/path-js.vm')
+<script>
+    var pageNum;
+    var pageSi;
+    var searchCondition;
+    
+    $(document).ready(function(){
+    	getTable();
+		webSocket();
+    });
+    
+	
+	
+	 function webSocket(){
+    	var socket = new WebSocket("ws://127.0.0.1:8080/manage/websocket");
+    	
+    	// 打开Socket 
+        socket.onopen = function(event) { 
+        
+          // 发送一个初始化消息
+          //socket.send(); 
+          // 监听消息
+          socket.onmessage = function(event) { 
+            console.log('Client received a message',event); 
+			console.log('Client received a message:',event.data);
+          }; 
+        
+          // 监听Socket的关闭
+          socket.onclose = function(event) { 
+            console.log('Client notified socket has closed',event); 
+          }; 
+        
+          // 关闭Socket.... 
+          //socket.close() 
+        };
+     }
+	function testWebSocket(){
+    	 jQuery.ajax({
+            type: "GET",
+            url: "$path/test/pager/Websocket",
+            dataType: "json",
+            error: function (request) {
+                alert("网络错误");
+            },
+            success: function (data) {
+    			console.log(data);
+            }
+        });
+    }
+	
+	
+	
+    function getTable(){
+    	$('#planYearTable').bootstrapTable('destroy');
+    	$('#planYearTable').bootstrapTable({
+    		method: 'post',
+    		url: "$path/test/pager/data",
+    		striped: true,
+    		dataType: "json",
+    		pagination: true,
+    		singleSelect: true,
+	  		contentType: "application/x-www-form-urlencoded",
+    		pageSize:10,
+    		pageNumber:1,
+    		pageList: [10, 25, 50, 100],
+    		sidePagination: "server",
+    		queryParams: queryParams,
+    		columns: [
+			{
+    			field: 'state',
+    			checkbox: true
+    		},
+			{
+    			field: 'planYearId',
+				visible: false,
+    			align: 'center',
+                valign: 'middle',
+    		},
+    		{
+    			field: 'planYearCode',
+    			title: '计划编号',
+    			align: 'center',
+                valign: 'middle',
+    		},
+			{
+    			field: 'planYearName',
+    			title: '计划名称',
+    			align: 'center',
+                valign: 'middle',
+    		},
+    		{
+    			field: 'majorName',
+    			title: '专业',
+    			align: 'center',
+                valign: 'middle',
+    		},
+    		{
+    			field: 'lineName',
+    			title: '线路',
+    			align: 'center',
+                valign: 'middle',
+    		},
+			{
+    			field: 'deptName',
+    			title: '所属项目部',
+    			align: 'center',
+                valign: 'middle',
+    		},
+			{
+    			field: 'year',
+    			title: '所属年份',
+    			align: 'center',
+                valign: 'middle',
+    		},
+			{
+    			field: 'createPerson',
+    			title: '制单人',
+    			align: 'center',
+                valign: 'middle',
+    		},
+			{
+    			field: 'createTime',
+    			title: '制单时间',
+    			align: 'center',
+                valign: 'middle',
+    		},
+			{
+    			field: 'status',
+    			title: '状态',
+    			align: 'center',
+                valign: 'middle',
+    		},
+			{
+			field: 'action',
+			title: '操作',
+			align: 'center',
+            valign: 'middle',
+			}]
+    	});
+    		
+    }
+    
+    //传递的参数
+    	
+    function queryParams(params) {
+    	var jsonuserinfo = $('#planYearSearchForm').serializeObject();
+    	searchCondition = JSON.stringify(jsonuserinfo);
+    	var temp = {
+    		offset: params.offset,
+			limit: params.limit,
+    		search: searchCondition
+    	};
+		console.log(temp);
+		return temp;
+    }
+    
+    $.fn.serializeObject = function()  
+    {  
+       var o = {};  
+       var a = this.serializeArray();  
+       jQuery.each(a, function() {  
+           if (o[this.name]) {  
+               if (!o[this.name].push) {  
+                   o[this.name] = [o[this.name]];  
+               }  
+               o[this.name].push(this.value || '');  
+           } else {  
+               o[this.name] = this.value || '';  
+           }  
+       });  
+       return o;  
+	};
+
+</script>

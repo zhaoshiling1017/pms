@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<!-- 系统通知DAO -->
+<mapper namespace="com.ducetech.pms.dao.NoticeDAO">
+	<resultMap type="com.ducetech.pms.model.Notice" id="noticeMap">
+		<id column="notice_id" property="noticeId"/>
+	   	<result column="procdef_id" property="procdefId"/>
+	   	<result column="procinst_id" property="procinstId"/>
+	   	<result column="notice_type" property="noticeType"/>
+	   	<result column="remind_time" property="remindTime"/>
+	   	<result column="remind_type" property="remindType"/>
+	   	<result column="comment" property="comment"/>
+	   	<result column="send_time" property="sendTime"/>
+	   	<result column="created_by_id" property="createById"/>
+	   	<result column="created_at" property="createAt"/>
+	   	<result column="is_deleted" property="isDeleted"/>
+	   	<result column="task_id" property="taskId"/>
+	   	<result column="role_id" property="roleId"/>
+	</resultMap>
+	
+	<!-- 通用查询 -->
+	<select id="selectNotice" parameterType="com.ducetech.pms.model.Notice" resultMap="noticeMap">
+		select * from notice where 1=1
+		<if test="noticeId!=null and noticeId!=''">
+			and notice_id=#{noticeId}
+		</if>
+		<if test="procdefId!=null and procdefId!=''">
+			and procdef_id=#{procdefId}
+		</if>
+		<if test="procinstId!=null and procinstId!=''">
+			and procinst_id=#{procinstId}
+		</if>
+		<if test="noticeType!=null and noticeType!=''">
+			and notice_type=#{noticeType}
+		</if>
+		<if test="remindTime!=null and remindTime!=''">
+			and remind_time=#{remindTime}
+		</if>
+		<if test="remindType!=null and remindType!=''">
+			and remind_type=#{remindType}
+		</if>
+		<if test="sendTime!=null and sendTime!=''">
+			and send_time=#{sendTime}
+		</if>
+		<if test="isDeleted!=null and isDeleted!=''">
+			and is_deleted=#{isDeleted}
+		</if>
+		<if test="taskId!=null and taskId!=''">
+			and task_id=#{taskId}
+		</if>
+		<if test="roleId!=null and roleId!=''">
+			and role_id=#{roleId}
+		</if>
+		ORDER BY notice_id DESC
+	</select>
+	
+	<!-- 按角色IDS获取通知 -->
+	<select id="selectNoticeByRoleIds" resultMap="noticeMap">
+		select * from notice where 1=1 
+		<if test="notice.noticeId!=null and notice.noticeId!=''">
+			and notice_id=#{notice.noticeId}
+		</if>
+		<if test="notice.procdefId!=null and notice.procdefId!=''">
+			and procdef_id=#{notice.procdefId}
+		</if>
+		<if test="notice.procinstId!=null and notice.procinstId!=''">
+			and procinst_id=#{notice.procinstId}
+		</if>
+		<if test="notice.noticeType!=null and notice.noticeType!=''">
+			and notice_type=#{notice.noticeType}
+		</if>
+		<if test="notice.remindTime!=null and notice.remindTime!=''">
+			and remind_time=#{notice.remindTime}
+		</if>
+		<if test="notice.remindType!=null and notice.remindType!=''">
+			and remind_type=#{notice.remindType}
+		</if>
+		<if test="notice.sendTime!=null and notice.sendTime!=''">
+			and send_time=#{notice.sendTime}
+		</if>
+		<if test="notice.isDeleted!=null and notice.isDeleted!=''">
+			and is_deleted=#{notice.isDeleted}
+		</if>
+		<if test="notice.taskId!=null and notice.taskId!=''">
+			and task_id=#{notice.taskId}
+		</if>
+		and role_id in 
+		<foreach item='item' index='index' collection="roleIds" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+		ORDER BY notice_id DESC
+	</select>
+	
+	<!-- 按ID获取通知  -->
+	<select id="selectNoticeById" resultMap="noticeMap">
+		select * from notice where notice_id=#{noticeId} ORDER BY notice_id DESC
+	</select>
+	
+	<!-- 新增通知 -->
+	<insert id="insertNotice" parameterType="com.ducetech.pms.model.Notice" useGeneratedKeys="true" keyProperty="noticeId">
+		insert into notice(procdef_id,procinst_id,notice_type,remind_time,remind_type,send_time,created_by_id,created_at,task_id,role_id)
+		values(#{procdefId},#{procinstId},#{noticeType},#{remindTime},#{remindType},#{sendTime},#{createById},#{createAt},#{taskId},#{roleId})
+	</insert>
+	
+	<!-- 更新通知 -->
+	<update id="updateNotice" parameterType="com.ducetech.pms.model.Notice">
+		update notice
+		<set>
+			<if test="noticeId!=null and noticeId!=''">
+				notice_id=#{noticeId},
+			</if>
+			<if test="procdefId!=null and procdefId!=''">
+				procdef_id=#{procdefId},
+			</if>
+			<if test="procinstId!=null and procinstId!=''">
+				procinst_id=#{procinstId},
+			</if>
+			<if test="noticeType!=null and noticeType!=''">
+				notice_type=#{noticeType},
+			</if>
+			<if test="remindTime!=null and remindTime!=''">
+				remind_time=#{remindTime},
+			</if>
+			<if test="remindType!=null and remindType!=''">
+				remind_type=#{remindType},
+			</if>
+			<if test="sendTime!=null and sendTime!=''">
+				send_time=#{sendTime},
+			</if>
+			<if test="isDeleted!=null and isDeleted!=''">
+				is_deleted=#{isDeleted},
+			</if>
+			<if test="taskId!=null and taskId!=''">
+				task_id=#{taskId},
+			</if>
+			<if test="roleId!=null and roleId!=''">
+				role_id=#{roleId},
+			</if>
+		</set>
+		where notice_id=#{noticeId}
+	</update>
+	
+	<!-- 按人员ID获取系统通知 -->
+	<select id="selectNoticeByNoticeRole" resultMap="noticeMap">
+		select n.* from notice n,notice_role r where r.user_id=#{nRole.userId} and n.notice_id=r.notice_id 
+		<if test="nRole.status!=null and nRole.status!=''">
+			and r.status=#{nRole.status}
+		</if>
+		<if test="nRole.isDeleted!=null and nRole.isDeleted!=''">
+			and r.is_deleted=#{nRole.isDeleted}
+		</if>
+		ORDER BY notice_id DESC
+	</select>
+</mapper>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>消息通知</title>
+    #parse('common/path-css.vm')
+</head>
+<body>
+<div class="wrapper weight-bold">
+    <!--planel-->
+    <div class="panel">
+        <!--planel-head-->
+        <div class="panel-head">
+            <h4 >消息通知</h4>
+            #if($!type==0)
+            <a href="$path/main" class="btn btn-back" target="myiframe">返回</a>
+       		#else
+            <a href="$path/messages/message" class="btn btn-back" target="myiframe">返回</a>
+       		#end
+        </div>
+        <!--planel-body-->
+        <div class="panel-body padding-10">
+            <div class="the-information-list">
+                <p class="mar-top-20">
+                    <label>通知标题：</label>
+                    <span>$!msgRole.message.msgTitle</span>
+                </p>
+                <p class="mar-top-20">
+                    <label>发送人：</label>
+                    <span>$!msgRole.message.user.name</span>
+                </p>
+                <p class="mar-top-20">
+                    <label>发布时间：</label>
+                     <span>$!msgRole.message.publishTime</span>
+                </p>
+                <p class="mar-top-20">
+                    <label>发布部门：</label>
+                    <span>$!msgRole.message.user.department.departmentName</span>
+                </p>
+                <div class="mar-top-20">
+                    <label>正文：</label>
+                    <div>$!msgRole.message.content<div>
+                </div>
+            </div>
+            <div class="border-all enclosure-download clear mar-left-10">
+                <h3 class="table-title">附件下载</h3>
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>附件名称</th>
+                        <th>上传时间</th>
+                        <th>上传人</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    #foreach($msgFile in $msgFiles)
+                    <tr>
+                        <td title="$!msgFile.fileName">$!msgFile.fileName</td>
+                        <td title="$!msgFile.uploadTime">$!msgFile.uploadTime</td>
+                        <td title="$!msgFile.createBy.name">$!msgFile.createBy.name</td>
+                        <td>
+                            <a href="javascript:void(0);" onclick="downloadMsgFile($!msgFile.msgFileId);">下载</a>
+                        </td>
+                    </tr>
+                    #end
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="$path/static/js/jquery.min.js" type="application/javascript"></script>
+<script src="$path/static/js/index.js" type="application/javascript"></script>
+   <script src="$path/static/js/alert.js" type="application/javascript"></script>
+</body>
+</html>
+<script>
+	function downloadMsgFile(id){
+		jQuery.ajax({
+			type: "get",
+			url: "$path/messages/judgeMessageFile/"+id,
+			dataType: "json",
+			error: function (request) {
+				initAlert(0,"网络错误");
+			},
+			success: function (data) {
+				for(x in data){
+					if(x == 0){
+						initAlert(x,data[x]);
+					}else{
+						location.href="$path/messages/downloadMessageFile/"+id;
+					}
+				}
+			}
+		 });
+ 	}	
+</script>

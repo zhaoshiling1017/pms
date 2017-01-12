@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>系统通知</title>
+    #parse('common/path-css.vm')
+    <script src="$path/static/js/jquery.min.js" type="text/javascript"></script>
+    <script src="$path/static/js/main.js" type="text/javascript"></script>
+    <script src="$path/static/js/index.js" type="text/javascript"></script>
+	<!-- jqgrid -->
+    <script src="$path/static/js/jqgrid/grid.locale-cn.js" type="text/javascript"></script>
+    <script src="$path/static/js/jqgrid/jquery.jqGrid.min.js" type="text/javascript"></script>
+    <script src="$path/static/js/jqgrid/table-jqgrid.js" type="text/javascript"></script>
+    <!-- json-serializeObject -->
+    <script src="$path/static/js/json/json-serializeObject.js" type="text/javascript"></script>
+	<script src="$path/static/js/alert.js" type="application/javascript"></script>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="panel">
+            <div class="panel-head">
+                <h4>系统通知</h4>
+            </div>
+            <div class="panel-body">
+                <div class="operation">
+                </div>
+				<form id="noticeForm">
+                </form>
+				<!-- checkbox table -->
+                <table  id="noticeTable" class="table table-bordered"></table>
+                <div id="page">
+                	<div class="page-left">
+                		<!-- <input type="checkbox"/> -->
+                		#if($shiro.hasPermission("系统通知-删除"))  
+                		<a class="notice-delete" href="javascript:;">删除</a>
+                		#end
+                		#if($shiro.hasPermission("系统通知-标为已读"))  
+                		<a class="notice-mark-read" href="javascript:;">标为已读</a>
+                		#end
+                	</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 系统通知详情 -->
+    <div class="modal" id="detials">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="left weight-bold blue-font">系统通知详情</h3>
+                <a href="javascript:void(0)" class="icon-delete right"></a>
+            </div>
+            <div class="modal-body min-height">
+                <p class="clear">
+                	<label>流程编号:</label>
+                	<span class="procinstCode"></span>
+                </p>
+                <p class="clear">
+                	<label>流程名称:</label>
+                	<span class="procinstName"></span>
+                </p>
+                <p class="clear">
+                	<label>流程发起人:</label>
+                	<span class="startPerson"></span>
+                </p>
+                <p class="clear">
+                	<label>流程发起时间:</label>
+                	<span class="startTime"></span>
+                </p>
+                <p class="clear">
+                	<label>任务编号:</label>
+                	<span class="taskId"></span>
+                </p>
+                <p class="clear">
+                	<label>任务类型:</label>
+                	<span class="taskType"></span>
+                </p>
+                <p class="clear">
+                	<label>通知时间:</label>
+                	<span class="noticeTime"></span>
+                </p>
+                <p class="clear">
+                	<label>通知类型:</label>
+                	<span class="noticeType"></span>
+                </p>
+                <p class="clear handle">
+                	<label>操作:</label>
+                	<a class="handle" href="javascript:;" target="myiframe">处理</a>
+                </p>
+                <p class="clear back">
+                	<label>状态:</label>
+                	<span class="isBack"></span>
+                </p>
+            </div>
+            <div class="modal-footer  clear">
+                <div class="btn-group">
+                    <a href="javascript:void(0)" class="btn btn-primary disappear-modal">取消</a>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+$(function () {
+	tableInit();
+	//流程名称点击事件
+	$(document).on("click","[aria-describedby$='procName']",function(){
+		var id = $(this).closest("tr").attr("id");
+		jQuery.ajax({
+	       type: "get",
+	       url: "$path/notices/getNoticeById/"+id,
+	       dataType: "json",
+	       error: function (request) {
+	       		initAlert(0,"网络错误");   
+	       },
+	       success: function (data) {
+				noticeUnCount();
+	       		//console.log(data);
+	       		//流程名称
+	       		$(".procinstCode").text(data.notice.procinst.procinstCode);
+	       		//流程名称
+	       		$(".procinstName").text(data.notice.procinst.procName);
+	       		//流程发起人
+	       		$(".startPerson").text(data.notice.procinst.startPerson.name);
+	       		//流程发起时间
+	       		$(".startTime").text(data.notice.procinst.startTime);
+	       		//任务编号
+	       		$(".taskId").text(data.notice.task.procinstCode);
+	       		//任务类型
+	       		$(".taskType").text(data.notice.procinst.procType==1?"临时流程":"普通流程");
+	       		//通知时间
+	       		$(".noticeTime").text(data.notice.sendTime);
+	       		//通知类型
+	       		$(".noticeType").text(data.notice.noticeType==1?"定时通知":"系统通知");
+	       		//处理
+	       		if(data.notice.procinst.procType == 0){
+        			href = '$path/tasks/taskHandle/6/' + data.notice.task.taskId;
+				}else{
+					href = '$path/tempTasks/tempTaskHandle/6/' + data.notice.task.taskId;
+        		}
+        		if(data.notice.task.isBack == "1"){    //已退回，隐藏按钮
+        			$(".handle").hide();
+        			$(".back").show();
+       				$(".isBack").text("已退回");
+        		}else{
+	        		if(data.notice.procinst.procType==1){
+		        		jQuery.ajax({
+							type: "post",
+							url: "$path/tempTasks/handleShow",
+							dataType: "json",
+							data: { "id":data.notice.task.taskId },
+							error: function (request) {
+								initAlert(0,"网络错误");
+							},
+							success: function (data) {
+								if(data=='0'){    //未处理，显示按钮
+									$(".handle").show();
+									$(".back").hide();
+								}else{        	  //已处理，隐藏按钮
+									$(".handle").hide();
+									$(".back").show();
+									$(".isBack").text("已处理");
+								}
+							}
+						});
+	        		}else{
+	        			$(".handle").show();
+	        			$(".back").hide();
+	        		}
+        		}
+        		$(".handle").attr("href",href);
+	       		$("#detials").show();
+	       	}
+		});
+	})
+	//刷新页面
+	$("#detials .icon-delete,#detials .disappear-modal").click(function(){
+		$(".ui-jqgrid-btable").jqGrid().trigger('reloadGrid');
+	}) 
+});
+function tableInit(){
+	$("#noticeTable").jqGrid({
+        url:"$path/notices/noticeData",
+        datatype:"json", 
+        mtype:"post",
+        height:'auto',
+        autowidth:true,	
+		postData: {
+			search : JSON.stringify($('#noticeForm').serializeObject())
+		},
+        colNames:['任务编号', '流程名称', '流程类型', '节点', '通知时间',"通知类型","状态",""],
+        colModel:[
+        	{name:'notice.task.taskCode', width:'15%'},
+            {name:'notice.procinst.procName', width:'15%',formatter:function(cellvalue){
+            	var str = '<a href="#detials" data-modal="detials">'+ cellvalue +'</a>'
+            	return str;
+            }},
+            {name:'notice.procinst.procType', width:'15%', formatter:function(cellvalue){
+					return (cellvalue == 0 ? '普通流程' : '临时流程');
+				}
+			},
+            {name:'notice.task.nodeName', width:'15%'},
+			{name:'notice.sendTime', width:'20%'},
+            {name:'notice.noticeType', width:'15%', formatter:function(cellvalue){
+					return (cellvalue == 0 ? '系统通知' : '定时通知');
+				}
+			},
+			{name:'status', width:'10%',formatter:function(cellvalue){
+				return (cellvalue == 0 ? '未读' : '已读');
+			}},
+            {name:'notice.isDeleted', width:'10%',hidden:true},
+            /*{name:'operation', width:'10%',formatter:function(cellvalue,options,rowObject){
+            		var href1 = '',href2 = '';
+            		if(rowObject.notice.procinst.procType == 0){
+            			href1 = '$path/tasks/taskDetail/6/'+ rowObject.notice.procinstId;
+            			href2 = '$path/tasks/taskHandle/6/' + rowObject.notice.taskId;
+					}else{
+						href1 = '$path/tempTasks/tempTaskDetail/6/'+ rowObject.notice.procinstId;
+						href2 = '$path/tempTasks/tempTaskHandle/6/' + rowObject.notice.taskId;
+            		}
+            		var str = '<a href="'+ href1 +'" target="myiframe">流程详情</a><span class="separate"> | </span><a href="'+ href2 +'" target="myiframe">处理</a>'
+					return str;
+            	}
+			},*/
+        ],
+        viewrecords: true,//是否在浏览导航栏显示记录总数
+        rowNum:10,//每页显示记录数
+        pager:$('#page'),
+        multiselect:true,
+		jsonReader:{
+            page: "page",
+            total: "pages",
+            records: "count",
+            root: "results",
+            repeatitems: false,
+            id: "id"
+        },
+       gridComplete:function(){
+        	resize();
+        	$("[aria-describedby$='status']").each(function(){
+        		if($(this).text() == '未读'){
+        			$(this).parent().addClass("bold");
+        		}
+        	})
+        }
+    });
+}
+
+function getTableData() { 
+	$("#noticeTable").jqGrid('setGridParam',{
+    	postData: { 
+			search : JSON.stringify($('#noticeForm').serializeObject())
+		}
+	}).trigger('reloadGrid'); 
+}
+</script>
+</body>
+</html>

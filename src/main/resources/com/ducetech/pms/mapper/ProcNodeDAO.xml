@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<!-- 流程节点DAO -->
+<mapper namespace="com.ducetech.pms.dao.ProcNodeDAO">
+	<resultMap type="com.ducetech.pms.model.ProcNode" id="procNodeMap">
+		<id column="node_id" property="nodeId"/>
+	   	<result column="node_name" property="nodeName"/>
+	   	<result column="node_code" property="nodeCode"/>
+	   	<result column="node_type" property="nodeType"/>
+	   	<result column="is_time" property="isTime"/>
+	   	<result column="up_node_id" property="upNodeId"/>
+	   	<result column="next_node_id" property="nextNodeId"/>
+	   	<result column="procdef_id" property="procdefId"/>
+	   	<result column="create_by_id" property="createById"/>
+	   	<result column="create_at" property="createAt"/>
+	   	<result column="is_deleted" property="isDeleted"/>
+	</resultMap>
+	
+	<!-- 通用查询 -->
+	<select id="selectProcNode" parameterType="com.ducetech.pms.model.ProcNode" resultMap="procNodeMap">
+		select * from proc_node where 1=1 
+			<if test="nodeName!=null and nodeName!=''">
+				and node_name=#{nodeName}
+			</if>
+			<if test="nodeCode!=null and nodeCode!=''">
+				and node_code=#{nodeCode}
+			</if>
+			<if test="nodeType!=null and nodeType!=''">
+				and node_type=#{nodeType}
+			</if>
+			<if test="isTime!=null and isTime!=''">
+				and is_time=#{isTime}
+			</if>
+			<if test="upNodeId!=null and upNodeId!=''">
+				and up_node_id=#{upNodeId}
+			</if>
+			<if test="nextNodeId!=null and nextNodeId!=''">
+				and next_node_id=#{nextNodeId}
+			</if>
+			<if test="procdefId!=null and procdefId!=''">
+				and procdef_id=#{procdefId}
+			</if>
+			<if test="createById!=null and createById!=''">
+				and create_by_id=#{createById}
+			</if>
+			<if test="createAt!=null and createAt!=''">
+				and create_at=#{createAt}
+			</if>
+			<if test="isDeleted!=null and isDeleted!=''">
+				and is_deleted=#{isDeleted}
+			</if>
+	</select>
+	
+	<!-- 按ID查询节点 -->
+	<select id="selectProcNodeByNodeId" resultMap="procNodeMap">
+		select * from proc_node where node_id=#{nodeId}
+	</select>
+</mapper>

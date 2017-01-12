@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+ 
+<mapper namespace="com.ducetech.pms.dao.NoticeRoleDAO">
+	<resultMap type="com.ducetech.pms.model.NoticeRole" id="noticeRoleMap">
+		<id column="id" property="Id"/>
+		<result column="role_id" property="roleId"/>
+		<result column="notice_id" property="noticeId"/>
+		<result column="user_id" property="userId"/>
+		<result column="status" property="status"/>
+		<result column="read_time" property="readTime"/>
+		<result column="receive_time" property="receiveTime"/>
+		<result column="is_deleted" property="isDeleted"/>
+		<result column="del_time" property="delTime"/>
+	</resultMap>
+	
+	<!-- 通用查询 -->
+	<select id="selectNoticeRole" parameterType="com.ducetech.pms.model.NoticeRole" resultMap="noticeRoleMap">
+		select * from notice_role where 1=1
+		<if test="Id!=null and Id!=''">
+			and id=#{Id}
+		</if>
+		<if test="roleId!=null and roleId!=''">
+			and role_id=#{roleId}
+		</if>
+		<if test="noticeId!=null and noticeId!=''">
+			and notice_id=#{noticeId}
+		</if>
+		<if test="userId!=null and userId!=''">
+			and user_id=#{userId}
+		</if>
+		<if test="status!=null and status!=''">
+			and status=#{status}
+		</if>
+		<if test="readTime!=null and readTime!=''">
+			and read_time=#{readTime}
+		</if>
+		<if test="receiveTime!=null and receiveTime!=''">
+			and receive_time=#{receiveTime}
+		</if>
+		<if test="isDeleted!=null and isDeleted!=''">
+			and is_deleted=#{isDeleted}
+		</if>
+		<if test="delTime!=null and delTime!=''">
+			and del_time=#{delTime}
+		</if>
+		ORDER BY id DESC
+	</select>
+	
+	<!-- 按ID查询 -->
+	<select id="selectNoticeRoleById" resultMap="noticeRoleMap">
+		select * from notice_role where id=#{Id} ORDER BY id DESC
+	</select>
+	
+	<!-- 更新通知角色 -->
+	<update id="updateNoticeRole" parameterType="com.ducetech.pms.model.NoticeRole">
+		update notice_role
+		<set>
+			<if test="roleId!=null and roleId!=''">
+				role_id=#{roleId},
+			</if>
+			<if test="noticeId!=null and noticeId!=''">
+				notice_id=#{noticeId},
+			</if>
+			<if test="userId!=null and userId!=''">
+				user_id=#{userId},
+			</if>
+			<if test="status!=null and status!=''">
+				status=#{status},
+			</if>
+			<if test="readTime!=null and readTime!=''">
+				read_time=#{readTime},
+			</if>
+			<if test="receiveTime!=null and receiveTime!=''">
+				receive_time=#{receiveTime},
+			</if>
+			<if test="isDeleted!=null and isDeleted!=''">
+				is_deleted=#{isDeleted},
+			</if>
+			<if test="delTime!=null and delTime!=''">
+				del_time=#{delTime},
+			</if>
+		</set>
+		where id=#{Id}
+	</update>
+	
+	<!-- 新增通知角色 -->
+	<insert id="insertNoticeRole" parameterType="com.ducetech.pms.model.NoticeRole" useGeneratedKeys="true" keyProperty="Id">
+		insert into notice_role(role_id,notice_id,user_id,receive_time)
+		values(#{roleId},#{noticeId},#{userId},#{receiveTime})
+	</insert>
+</mapper>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.ducetech.pms.dao.ProcFileDAO">
+	<resultMap type="com.ducetech.pms.model.ProcinstFile" id="procFileMap">
+		<id column="procinst_file_id" property="procinstFileId" />
+		<result column="procinst_id" property="procinstId" />
+		<result column="proc_type" property="procType" />
+		<result column="task_id" property="taskId" />
+		<result column="node_id" property="nodeId" />
+		<result column="is_back" property="isBack" />
+		<result column="upload_time" property="uploadTime" />
+		<result column="path" property="path" />
+		<result column="file_name" property="fileName" />
+		<result column="create_by_id" property="createById" />
+		<result column="is_deleted" property="isDeleted" />
+		<result column="upload_task_id" property="uploadTaskId" />
+		<result column="upload_node_id" property="uploadNodeId" />
+		<result column="upload_role_id" property="uploadRoleId" />
+	</resultMap>
+	
+	<!-- 新增流程附件 -->
+	<insert id="insertProcFile" useGeneratedKeys="true" keyProperty="procinstFileId" parameterType="com.ducetech.pms.model.ProcinstFile">
+		insert into
+		procinst_file(procinst_id,proc_type,task_id,node_id,upload_time,path,file_name,create_by_id,upload_task_id,upload_node_id,upload_role_id)
+		values(#{procinstId},#{procType},#{taskId},#{nodeId},#{uploadTime},#{path},#{fileName},#{createById},#{uploadTaskId},#{uploadNodeId},#{uploadRoleId})
+	</insert>
+	
+	<!-- 流程附件通用查询 -->
+	<select id="selectProcFile" parameterType="com.ducetech.pms.model.ProcinstFile" resultMap="procFileMap">
+		select * from procinst_file where 1=1 
+		<if test="procinstFileId!=null and procinstFileId!=''">
+			and procinst_file_id=#{procinstFileId}
+		</if>
+		<if test="procinstId!=null and procinstId!=''">
+			and procinst_id=#{procinstId}
+		</if>
+		<if test="procType!=null and procType!=''">
+			and proc_type=#{procType}
+		</if>
+		<if test="taskId!=null and taskId!=''">
+			and task_id=#{taskId}
+		</if>
+		<if test="nodeId!=null and nodeId!=''">
+			and node_id=#{nodeId}
+		</if>
+		<if test="isBack!=null and isBack!=''">
+			and is_back=#{isBack}
+		</if>
+		<if test="createById!=null and createById!=''">
+			and create_by_id=#{createById}
+		</if>
+		<if test="isDeleted!=null and isDeleted!=''">
+			and is_deleted=#{isDeleted}
+		</if>
+		<if test="uploadTaskId!=null and uploadTaskId!=''">
+			and upload_task_id=#{uploadTaskId}
+		</if>
+		<if test="uploadNodeId!=null and uploadNodeId!=''">
+			and upload_node_id=#{uploadNodeId}
+		</if>
+		<if test="uploadRoleId!=null and uploadRoleId!=''">
+			and upload_role_id=#{uploadRoleId}
+		</if>
+		GROUP BY path
+	</select>
+	
+	<!-- 更新流程附件 -->
+	<update id="deleteProcFile">
+		update procinst_file set is_deleted='1' where procinst_file_id=#{fileId}
+	</update>
+	
+	<update id="updateIsBackProcFile">
+		update procinst_file set is_back='1' where procinst_file_id=#{fileId}
+	</update>
+	
+	<!-- 按ID查询流程附件 -->
+	<select id="selectProcFileById" resultMap="procFileMap">
+		select * from procinst_file where is_deleted='0' and procinst_file_id=#{procFileId}
+	</select>
+	
+	<!-- 按工单ids获取正序流程附件  -->
+	<select id="selectProcFileByTaskIds" resultMap="procFileMap">
+		select * from procinst_file where task_id in 
+		<foreach item='taskId' index='index' collection="list" open="(" separator="," close=")">
+			#{taskId}
+		</foreach>
+	</select>
+</mapper>

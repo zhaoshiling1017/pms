@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>集团消息-发布消息</title>
+    #parse('common/path-css.vm')
+    <script src="$path/static/js/jquery.min.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="$path/static/js/themes/default/default.css">
+    <link rel="stylesheet" href="$path/static/css/webuploader.css">
+    <link rel="stylesheet" href="$path/static/css/diyUpload.css">
+    <script src="$path/static/js/upload/webuploader.html5only.js" type="text/javascript"></script>
+    <script src="$path/static/js/upload/diyUpload.js" type="text/javascript"></script>
+    <script src="$path/static/js/upload/upload.js" type="text/javascript"></script>
+    <script src="$path/static/js/main.js" type="text/javascript"></script>
+    <script src="$path/static/js/index.js" type="text/javascript"></script>
+    <script src="$path/static/js/alert.js" type="application/javascript"></script>
+</head>
+<body>
+<div class="wrapper weight-bold">
+    <!--planel-->
+    <div class="panel">
+        <!--planel-head-->
+        <div class="panel-head">
+            <div class="left mar-left-10">
+                <h4 class="has-link">集团消息</h4>
+                <b class="blue-font">发布消息</b>
+            </div>
+            <a href="$path/messages/groupMessages" class="btn btn-back" target="myiframe">返回</a>
+        </div>
+        <!--planel-body-->
+        <div class="panel-body padding-10">
+            <form id="releaseMessageForm">
+             	<input type="hidden" name='roleIds' id='roleIds'/>
+                <div class="the-information-input">
+                    <div class="row clear mar-top-10 pos-relative choose-role-g">
+                    	<input type="hidden" name="uuid" id='uuid' value="$!uuid" data-url="$path/file/upload/">
+                        <label for="addressee" class="red-star">选择角色：</label>
+                        <div class="left dropDown Multiselect changed-width" id="relate-department">
+                            <ul class="select-drop clear"></ul>
+                            <ul class="can-select xmb">
+                                <li class="clear">
+                                    <input type="checkbox" class="select-all-items" />
+                                    <label>全选</label>
+                                </li>
+                                #foreach($role in $roles)
+                                    <li class="clear">
+                                        <input type="checkbox" name="$!node.nodeId" value="$!role.roleId"/>
+                                        <label>$!role.roleName</label>
+                                    </li>
+								#end
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row clear mar-top-10">
+                        <label for="theme" class="red-star">主题：</label>
+                        <input name='msgTitle' type="text" placeholder="请输入" class="changed-width reset-input" id="theme">
+                    </div>
+                    <div class="row clear mar-top-10">
+                    	<div class="upload-container" style="margin-left:80px;">
+                            <span class="icon icon-pin"></span>
+                            <span id="upload">附件上传</span>
+                        </div>
+                    </div>
+                    <div class="row clear mar-top-10">
+                        <label>正文：</label>
+                        <div class="changed-width left">
+                            <form >
+                                <textarea name="content"></textarea>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="footer btn-group mar-top-20">
+                        <button type="button" onclick="role()" class="btn btn-primary">发送</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="$path/static/js/kindeditor-min.js" type="application/javascript"></script>
+<script src="$path/static/js/zh_CN.js" type="application/javascript"></script>
+<script>
+    var fileArr =[];
+    
+    $(function() {
+    	var uuid = $('#uuid').val();
+    	//获取页面中隐藏域uuid的value以及被删除文件名
+		$(document).on("click",".diyCancel",function(){
+			var fileName = $(this).prev(".diyFileName").text();
+			jQuery.ajax({
+				async: false,
+				type: "post",
+				url: "$path/messages/deleteMessageFile",
+				dataType: "json",
+				data: {"uuid":uuid,"fileName":fileName},
+				error: function (request) {
+					initAlert(0,"网络错误");
+				},
+				success: function (data) {
+					console.log(data);
+					for(x in data){
+						initAlert(x,data[x]);
+					}
+				}
+			 });
+		})
+        var editor = KindEditor.create('textarea[name="content"]',{
+            height:'350px',
+            width:'100%',
+            resizeType:0,
+            themeType : 'simple',
+            allowPreviewEmoticons : false,
+            allowImageUpload : false,
+            items : [
+                'bold', 'italic', 'underline','strikethrough','|',
+                 'forecolor', 'hilitecolor','|',
+                 'removeformat','|',
+                 'insertorderedlist','insertunorderedlist','|',
+                 'formatblock', 'fontname', 'fontsize','|',
+                'justifyleft', 'justifycenter', 'justifyright','justifyfull','|',
+                'hr',
+            ]
+
+        });
+    });
+</script>
+<script  type="text/javascript">
+	function role(){
+		var checkboxOne =$(".xmb").find(":checkbox:checked").not(".select-all-items");
+		var arrOne = [];
+		for(var i=0;i<checkboxOne.length;i++){
+			var obj=checkboxOne[i];
+			if(obj.checked==true){
+				arrOne.push($(checkboxOne[i]).attr("value"));
+			}
+		}
+		$("#roleIds").val(arrOne);
+		//获取文本域的内容
+		var content = $(".ke-edit-iframe").contents().find(".ke-content").html();
+		$("textarea[name='content']").text(content);
+		var result = formValidation($("#releaseMessageForm"));
+		if(!result){
+			return false;
+		}
+		var uuid = $('#uuid').val();
+		//提交表单
+	   jQuery.ajax({
+			type: "post",
+			url: "$path/messages/releaseMessage",
+			dataType: "json",
+			data: $('#releaseMessageForm').serialize(),
+			error: function (request) {
+				initAlert(0,"网络错误");
+			},
+			success: function (data) {
+				jQuery.ajax({
+					type: "post",
+					url: "$path/messages/uploadMessageFile",
+					dataType: "json",
+					data: { "file": JSON.stringify(fileArr),"id":data.id ,"uuid":uuid},
+					error: function (request) {
+						initAlert(0,"网络错误");
+					},
+					success: function (data) {
+					}
+				 });
+				for(x in data){
+					if(x == 0 || x == 1){
+						initAlert(x,data[x]);
+					}
+				}
+				$("#mask",parent.document).hide();
+				setTimeout(function(){
+					$("#myiframe",parent.document).attr("src","$path/messages/groupMessages");
+					$(".nav-notice",parent.document).addClass("selected").siblings().removeClass("selected");
+				},3000)
+			}
+		 });	
+	}
+</script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.ducetech.pms.dao.MsgFileDAO">
+	<resultMap type="com.ducetech.pms.model.MsgFile" id="msgFileMap">
+		<id column="msg_file_id" property="msgFileId" />
+		<result column="msg_id" property="msgId" />
+		<result column="upload_time" property="uploadTime" />
+		<result column="path" property="path" />
+		<result column="file_name" property="fileName" />
+		<result column="create_by_id" property="createById" />
+		<result column="is_deleted" property="isDeleted" />
+	</resultMap>
+
+	<insert id="insertMsgFile" useGeneratedKeys="true"
+		keyProperty="msgFileId" parameterType="com.ducetech.pms.model.MsgFile">
+		insert into
+		msg_file(msg_id,upload_time,path,create_by_id,file_name)
+		values(#{msgId},#{uploadTime},#{path},#{createById},#{fileName})
+	</insert>
+
+	<select id="selectMsgFile" parameterType="com.ducetech.pms.model.MsgFile"
+		resultMap="msgFileMap">
+		select * from msg_file where is_deleted='0' and
+		msg_id=#{msgId}
+	</select>
+
+	<update id="deleteMsgFile" parameterType="string">
+		update msg_file set
+		is_deleted='1' where msg_id=#{msgId}
+	</update>
+
+	<select id="selectMsgFileById" parameterType="string"
+		resultMap="msgFileMap">
+		select * from msg_file where is_deleted='0' and
+		msg_file_id=#{msgFileId}
+	</select>
+
+</mapper>

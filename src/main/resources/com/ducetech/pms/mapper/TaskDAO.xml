@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<!-- 工单DAO -->
+<mapper namespace="com.ducetech.pms.dao.TaskDAO">
+	<resultMap type="com.ducetech.pms.model.Task" id="taskMap">
+		<id column="task_id" property="taskId"/>
+	   	<result column="task_code" property="taskCode"/>
+	   	<result column="procinst_id" property="procinstId"/>
+	   	<result column="procinst_code" property="procinstCode"/>
+	   	<result column="proc_type" property="procType"/>
+	   	<result column="up_node_id" property="upNodeId"/>
+	   	<result column="next_node_id" property="nextNodeId"/>
+	   	<result column="node_id" property="nodeId"/>
+	   	<result column="node_name" property="nodeName"/>
+	   	<result column="node_type" property="nodeType"/>
+	   	<result column="time_limit" property="timeLimit"/>
+	   	<result column="status" property="status"/>
+	   	<result column="comment" property="comment"/>
+	   	<result column="start_time" property="startTime"/>
+	   	<result column="end_time" property="endTime"/>
+	   	<result column="start_person_id" property="startPersonId"/>
+	   	<result column="start_dept_id" property="startDeptId"/>
+	   	<result column="dispose_persion_id" property="disposePersionId"/>
+	   	<result column="dispose_time" property="disposeTime"/>
+	   	<result column="back_persion_id" property="backPersionId"/>
+	   	<result column="back_time" property="backTime"/>
+	   	<result column="back_comment" property="backComment"/>
+	   	<result column="is_back" property="isBack"/>
+	   	<result column="role_id" property="roleId"/>
+	   	<result column="up_task_id" property="upTaskId"/>
+	   	<result column="approve_task_id" property="approveTaskId"/>
+	   	<result column="start_person_role_id" property="startPersonRoleId"/>
+	</resultMap>
+	<!-- 通用查询降序 -->
+	<select id="selectTask" parameterType="com.ducetech.pms.model.Task" resultMap="taskMap">
+		select * from task where 1=1 
+			<if test="taskCode!=null and taskCode!=''">
+				and task_code like '%' #{taskCode} '%'
+			</if>
+			<if test="procinstId!=null and procinstId!=''">
+				and procinst_id=#{procinstId}
+			</if>
+			<if test="procinstCode!=null and procinstCode!=''">
+				and procinst_code=#{procinstCode}
+			</if>
+			<if test="procType!=null and procType!=''">
+				and proc_type=#{procType}
+			</if>
+			<if test="upNodeId!=null and upNodeId!=''">
+				and up_node_id=#{upNodeId}
+			</if>
+			<if test="nextNodeId!=null and nextNodeId!=''">
+				and next_node_id=#{nextNodeId}
+			</if>
+			<if test="nodeId!=null and nodeId!=''">
+				and node_id=#{nodeId}
+			</if>
+			<if test="nodeName!=null and nodeName!=''">
+				and node_name=#{nodeName}
+			</if>
+			<if test="nodeType!=null and nodeType!=''">
+				and node_type=#{nodeType}
+			</if>
+			<if test="timeLimit!=null and timeLimit!=''">
+				and time_limit=#{timeLimit}
+			</if>
+			<if test="status!=null and status!=''">
+				and status=#{status}
+			</if>
+			<if test="statusMulti!=null and statusMulti.size() > 0">
+				and status in 
+				<foreach item='item' index='index' collection="statusMulti" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="disposePersionId!=null and disposePersionId!=''">
+				and dispose_persion_id=#{disposePersionId}
+			</if>
+			<if test="backPersionId!=null and backPersionId!=''">
+				and back_persion_id=#{backPersionId}
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+				and substr(start_time,1,10) between #{beginTime} and #{finishTime}
+			</if>
+			ORDER BY task_id DESC
+	</select>
+	
+	<!-- 通用查询升序 -->
+	<select id="selectTaskASC" parameterType="com.ducetech.pms.model.Task" resultMap="taskMap">
+		select * from task where 1=1 
+			<if test="taskCode!=null and taskCode!=''">
+				and task_code like '%' #{taskCode} '%'
+			</if>
+			<if test="procinstId!=null and procinstId!=''">
+				and procinst_id=#{procinstId}
+			</if>
+			<if test="procinstCode!=null and procinstCode!=''">
+				and procinst_code=#{procinstCode}
+			</if>
+			<if test="procType!=null and procType!=''">
+				and proc_type=#{procType}
+			</if>
+			<if test="upNodeId!=null and upNodeId!=''">
+				and up_node_id=#{upNodeId}
+			</if>
+			<if test="nextNodeId!=null and nextNodeId!=''">
+				and next_node_id=#{nextNodeId}
+			</if>
+			<if test="nodeId!=null and nodeId!=''">
+				and node_id=#{nodeId}
+			</if>
+			<if test="nodeName!=null and nodeName!=''">
+				and node_name=#{nodeName}
+			</if>
+			<if test="nodeType!=null and nodeType!=''">
+				and node_type=#{nodeType}
+			</if>
+			<if test="timeLimit!=null and timeLimit!=''">
+				and time_limit=#{timeLimit}
+			</if>
+			<if test="status!=null and status!=''">
+				and status=#{status}
+			</if>
+			<if test="statusMulti!=null and statusMulti.size() > 0">
+				and status in 
+				<foreach item='item' index='index' collection="statusMulti" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			<if test="disposePersionId!=null and disposePersionId!=''">
+				and dispose_persion_id=#{disposePersionId}
+			</if>
+			<if test="backPersionId!=null and backPersionId!=''">
+				and back_persion_id=#{backPersionId}
+			</if>
+			<if test="beginTime !=null and beginTime !=''">
+				and substr(start_time,1,10) between #{beginTime} and #{finishTime}
+			</if>
+			ORDER BY task_id ASC
+	</select>
+	
+	<!-- 按ID查询工单 -->
+	<select id="selectTaskByTaskId" resultMap="taskMap">
+		select * from task where task_id=#{taskId} ORDER BY task_id DESC
+	</select>
+	
+	<!-- 新增工单 -->
+	<insert id="insertTask" parameterType="com.ducetech.pms.model.Task" useGeneratedKeys="true" keyProperty="taskId">
+		insert into task(task_code,procinst_id,procinst_code,proc_type,comment,start_time,start_person_id,start_dept_id,up_node_id,next_node_id,node_id,node_name,node_type,time_limit,role_id,up_task_id,approve_task_id,is_back,start_person_role_id)
+		values(#{taskCode},#{procinstId},#{procinstCode},#{procType},#{comment},#{startTime},#{startPersonId},#{startDeptId},#{upNodeId},#{nextNodeId},#{nodeId},#{nodeName},#{nodeType},#{timeLimit},#{roleId},#{upTaskId},#{approveTaskId},#{isBack},#{startPersonRoleId})
+	</insert>
+	
+	<!-- 更新工单  -->
+	<update id="updateTask" parameterType="com.ducetech.pms.model.Task">
+		update task 
+		<set>
+			<if test="taskCode!=null and taskCode!=''">
+				task_code=#{taskCode},
+			</if>
+			<if test="procinstId!=null and procinstId!=''">
+				procinst_id=#{procinstId},
+			</if>
+			<if test="procinstCode!=null and procinstCode!=''">
+				procinst_code=#{procinstCode},
+			</if>
+			<if test="procType!=null and procType!=''">
+				proc_type=#{procType},
+			</if>
+			<if test="upNodeId!=null and upNodeId!=''">
+				up_node_id=#{upNodeId},
+			</if>
+			<if test="comment !=null and comment !=''">
+				comment=#{comment},
+			</if>
+			<if test="nextNodeId!=null and nextNodeId!=''">
+				next_node_id=#{nextNodeId},
+			</if>
+			<if test="nodeId!=null and nodeId!=''">
+				node_id=#{nodeId},
+			</if>
+			<if test="nodeName!=null and nodeName!=''">
+				node_name=#{nodeName},
+			</if>
+			<if test="nodeType!=null and nodeType!=''">
+				node_type=#{nodeType},
+			</if>
+			<if test="timeLimit!=null and timeLimit!=''">
+				time_limit=#{timeLimit},
+			</if>
+			<if test="status!=null and status!=''">
+				status=#{status},
+			</if>
+			<if test="disposePersionId!=null and disposePersionId!=''">
+				dispose_persion_id=#{disposePersionId}, 
+			</if>
+			<if test="disposeTime!=null and disposeTime!=''">
+				dispose_time=#{disposeTime},
+			</if>
+			<if test="endTime!=null and endTime!=''">
+				end_time=#{endTime}, 
+			</if>
+			<if test="backPersionId!=null and backPersionId!=''">
+				back_persion_id=#{backPersionId}, 
+			</if>
+			<if test="backTime!=null and backTime!=''">
+				back_time=#{backTime},
+			</if>
+			<if test="backComment!=null and backComment!=''">
+				back_comment=#{backComment},
+			</if>
+			<if test="isBack!=null and isBack!=''">
+				is_back=#{isBack},
+			</if>
+		</set>
+		 where task_id=#{taskId}
+	</update>
+	
+	<!-- 通过角色IDS获取工单 -->
+	<select id="selectTasksByRoleIds" resultMap="taskMap">
+		select t.* from task t where 1=1 
+			<if test="task.taskCode!=null and task.taskCode!=''">
+				and t.task_code like '%' #{task.taskCode} '%'
+			</if>
+			<if test="task.procinstId!=null and task.procinstId!=''">
+				and t.procinst_id=#{task.procinstId}
+			</if>
+			<if test="task.procinstCode!=null and task.procinstCode!=''">
+				and t.procinst_code=#{task.procinstCode}
+			</if>
+			<if test="task.procType!=null and task.procType!=''">
+				and t.proc_type=#{task.procType}
+			</if>
+			<if test="task.upNodeId!=null and task.upNodeId!=''">
+				and t.up_node_id=#{task.upNodeId}
+			</if>
+			<if test="task.nextNodeId!=null and task.nextNodeId!=''">
+				and t.next_node_id=#{task.nextNodeId}
+			</if>
+			<if test="task.nodeId!=null and task.nodeId!=''">
+				and t.node_id=#{task.nodeId}
+			</if>
+			<if test="task.nodeName!=null and task.nodeName!=''">
+				and t.node_name=#{task.nodeName}
+			</if>
+			<if test="task.nodeType!=null and task.nodeType!=''">
+				and t.node_type=#{task.nodeType}
+			</if>
+			<if test="task.timeLimit!=null and task.timeLimit!=''">
+				and t.time_limit=#{task.timeLimit}
+			</if>
+			<if test="task.status!=null and task.status!=''">
+				and t.status=#{task.status}
+			</if>
+			<if test="task.disposePersionId!=null and task.disposePersionId!=''">
+				and t.dispose_persion_id=#{task.disposePersionId}
+			</if>
+			<if test="task.beginTime !=null and task.beginTime !=''">
+				and substr(t.start_time,1,10) between #{task.beginTime} and #{task.finishTime}
+			</if>
+			<choose>
+				<when test="roleIds!=null and roleIds.size() > 0">
+					and t.role_id in  
+					<foreach item='item' index='index' collection="roleIds" open="(" separator="," close=")">
+						#{item}
+					</foreach>
+				</when>
+				<otherwise>
+					and t.role_id in ('') 
+				</otherwise>
+			</choose>
+			<if test="task.backPersionId!=null and task.backPersionId!=''">
+				and t.back_persion_id=#{task.backPersionId}
+			</if>
+			<choose>  
+	           <when test='task.status=="1"'>  
+				or t.task_id in(
+				select b.task_id from assignee b where b.result='1'
+					<choose>
+						<when test="roleIds!=null and roleIds.size() > 0">
+							 and b.user_id in
+							<foreach item='item' index='index' collection="roleIds" open="(" separator="," close=")">
+								#{item}
+							</foreach>
+						</when>
+						<otherwise>
+							and b.user_id in ('') 
+						</otherwise>
+					</choose> 
+				) 
+				<if test="task.taskCode!=null and task.taskCode!=''">
+					and t.task_code like '%' #{task.taskCode} '%'
+				</if>
+				<if test="task.isBack!=null and task.isBack!=''">
+					and t.is_back=#{task.isBack}
+				</if>
+				<if test="task.procType!=null and task.procType!=''">
+					and t.proc_type=#{task.procType}
+				</if>
+				<if test="task.beginTime !=null and task.beginTime !=''">
+					and substr(t.start_time,1,10) between #{task.beginTime} and #{task.finishTime}
+				</if>
+				or t.is_back='2' 
+					<choose>
+						<when test="roleIds!=null and roleIds.size() > 0">
+							and t.start_person_role_id in
+							<foreach item='item' index='index' collection="roleIds" open="(" separator="," close=")">
+								#{item}
+							</foreach>
+						</when>
+						<otherwise>
+							and t.start_person_role_id in ('') 
+						</otherwise>
+					</choose>
+					<if test="task.taskCode!=null and task.taskCode!=''">
+					and t.task_code like '%' #{task.taskCode} '%'
+				</if>
+				<if test="task.isBack!=null and task.isBack!=''">
+					and t.is_back=#{task.isBack}
+				</if>
+				<if test="task.procType!=null and task.procType!=''">
+					and t.proc_type=#{task.procType}
+				</if>
+				<if test="task.beginTime !=null and task.beginTime !=''">
+					and substr(t.start_time,1,10) between #{task.beginTime} and #{task.finishTime}
+				</if>
+	           </when >  
+	           <when test='task.status=="0"'>  
+	             or t.task_id in(
+						select b.task_id from assignee b where b.task_id in(
+						select a.task_id  from task  a where a.status='1') and b.result='0'
+					<choose>
+						<when test="roleIds!=null and roleIds.size() > 0">
+							 and b.user_id in
+							<foreach item='item' index='index' collection="roleIds" open="(" separator="," close=")">
+								#{item}
+							</foreach>
+						</when>
+						<otherwise>
+							and b.user_id in ('') 
+						</otherwise>
+					</choose>
+					)
+					<if test="task.taskCode!=null and task.taskCode!=''">
+						and t.task_code like '%' #{task.taskCode} '%'
+					</if>
+					<if test="task.isBack!=null and task.isBack!=''">
+						and t.is_back=#{task.isBack}
+					</if>
+					<if test="task.procType!=null and task.procType!=''">
+						and t.proc_type=#{task.procType}
+					</if>
+					<if test="task.beginTime !=null and task.beginTime !=''">
+						and substr(t.start_time,1,10) between #{task.beginTime} and #{task.finishTime}
+					</if>
+					or t.is_back='3' and t.task_id in(
+							select b.task_id from assignee b where b.task_id in(
+							select a.task_id  from task  a where a.status='1') and b.result='1') 
+					<choose>
+						<when test="roleIds!=null and roleIds.size() > 0">
+							and t.start_person_role_id in
+							<foreach item='item' index='index' collection="roleIds" open="(" separator="," close=")">
+								#{item}
+							</foreach>
+						</when>
+						<otherwise>
+							and t.start_person_role_id in ('') 
+						</otherwise>
+					</choose>
+					<if test="task.taskCode!=null and task.taskCode!=''">
+						and t.task_code like '%' #{task.taskCode} '%'
+					</if>
+					<if test="task.isBack!=null and task.isBack!=''">
+						and t.is_back=#{task.isBack}
+					</if>
+					<if test="task.procType!=null and task.procType!=''">
+						and t.proc_type=#{task.procType}
+					</if>
+					<if test="task.beginTime !=null and task.beginTime !=''">
+						and substr(t.start_time,1,10) between #{task.beginTime} and #{task.finishTime}
+					</if>
+	           </when >  
+	           <otherwise>  
+	           </otherwise>  
+	       </choose>  
+	       ORDER BY task_id DESC
+	</select>
+	
+	<select id="selectTaskByProcinstId" parameterType="com.ducetech.pms.model.Task" resultMap="taskMap">
+		select * from task where 1=1 
+			<if test="procinstId!=null and procinstId!=''">
+				and procinst_id=#{procinstId}
+			</if>
+			<if test="status !=null and status !=''">
+				and status=#{status}
+			</if>
+			ORDER BY task_id DESC
+	</select>
+	
+	<!-- 按工单ids获取正序  -->
+	<select id="selectTaskByIds" resultMap="taskMap">
+		select * from task where task_id in 
+		<foreach item='taskId' index='index' collection="list" open="(" separator="," close=")">
+			#{taskId}
+		</foreach>
+	</select>
+	
+</mapper>

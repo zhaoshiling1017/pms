@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <meta charset="UTF-8">
+	    <title>集团消息</title>
+	    #parse('common/path-css.vm')
+	    <script src="$path/static/js/jquery.min.js" type="text/javascript"></script>
+	    <script src="$path/static/js/main.js" type="text/javascript"></script>
+	    <script src="$path/static/js/index.js" type="text/javascript"></script>
+	    <!-- jqgrid -->
+	    <script src="$path/static/js/jqgrid/grid.locale-cn.js" type="text/javascript"></script>
+	    <script src="$path/static/js/jqgrid/jquery.jqGrid.min.js" type="text/javascript"></script>
+	    <script src="$path/static/js/jqgrid/table-jqgrid.js" type="text/javascript"></script>
+		<!-- json-serializeObject -->
+		<script src="$path/static/js/json/json-serializeObject.js" type="text/javascript"></script>
+	</head>
+	<body>
+	    <div class="wrapper">
+	        <div class="panel">
+	            <div class="panel-head">
+	                <h4>消息通知</h4>
+	            </div>
+	            <div class="panel-body">
+					<form class="control-condition" id="searchForm">
+	                </form>     
+	                <!--       
+	                <div class="operation clear">
+	                    <a href="$path/messages/messagePublish" class="btn-inform" target="myiframe">发布消息</a>
+	                </div>
+	                -->
+	                <!-- checkbox table -->
+	                <table  id="statTable" class="table table-bordered">
+	                </table>
+	                <div id="page">
+	                	<div class="page-left">
+	                		<!-- <input type="checkbox"/> -->
+	                		#if($shiro.hasPermission("消息通知-删除"))  
+	                		<a class="delete" href="javascript:;">删除</a>
+	                		#end
+	                		#if($shiro.hasPermission("消息通知-标为已读"))  
+	                		<a class="mark-read" href="javascript:;">标为已读</a>
+	                		#end
+	                	</div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</body>
+</html>
+<script>
+	$(function () {
+		tableInit();
+	});
+	
+	function tableInit(){
+		$("#statTable").jqGrid({
+	        url:"$path/messages/messageData",
+	        datatype:"json", 
+	        mtype:"post",
+	        height:'auto',
+	        autowidth:true,	
+	        postData: {
+				search : JSON.stringify($('#searchForm').serializeObject())
+			},
+	        colNames:['标题', '发送时间', '发送人','状态','部门'],
+	        colModel:[
+	            {name:'message.msgTitle', width:'15%',formatter:function(cellvalue,options,rowObject){
+	            	var href='$path/messages/messageDetail/1/'+ rowObject.id;
+	            	return '<a href="'+ href +'">'+ cellvalue +'</a>'
+	            }},
+	            {name:'message.publishTime', width:'15%'},
+	            {name:'message.user.name', width:'10%'},
+	            {name:'status', width:'15%',formatter:function(cellvalue){
+					return (cellvalue == 0 ? '未读' : '已读');
+				}},
+	            {name:'message.user.department.departmentName', width:'15%'},
+	        ],
+	        viewrecords: true,//是否在浏览导航栏显示记录总数
+	        rowNum:10,//每页显示记录数
+	        pager:$('#page'),
+			jsonReader:{
+	            page: "page",
+	            total: "pages",
+	            records: "count",
+	            root: "results",
+	            repeatitems: false,
+	            id: "id"
+	        },
+	        multiselect:true,
+	        gridComplete:function(){
+	        	resize();
+	        	$("[aria-describedby$='status']").each(function(){
+	        		if($(this).text() == '未读'){
+	        			$(this).parent().addClass("bold");
+	        		}
+	        	})
+	        }
+	    });
+	}
+</script>

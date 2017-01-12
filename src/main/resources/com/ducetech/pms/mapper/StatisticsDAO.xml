@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+ 
+ <mapper namespace="com.ducetech.pms.dao.StatisticsDAO">
+ 	<resultMap type="com.ducetech.pms.model.Statistics" id="statMap">
+ 		<result column="date" property="date"/>
+ 		<result column="count" property="count"/>
+ 	</resultMap>
+ 	
+ 	<select id="selectLaunchStatistics" parameterType="com.ducetech.pms.model.Statistics" resultMap="statMap">
+		select substring(start_time,6,2) as date,count(*) as count from procinst
+		where proc_name like '%' #{procName} '%' and proc_type=#{procType} and status=#{procinstStatus} and start_time like #{year} '%'
+		group by substring(start_time,6,2)
+ 	</select>
+ </mapper>
