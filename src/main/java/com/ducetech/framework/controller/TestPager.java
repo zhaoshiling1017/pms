@@ -21,7 +21,7 @@ import com.ducetech.util.PagerQueryUtil;
 
 @Controller
 @RequestMapping("/test")
-public class TestPager extends BaseController{
+public class TestPager extends BaseController {
 	
 	@Autowired
 	private UserService userService;

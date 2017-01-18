@@ -22,7 +22,7 @@
 	
 	<!-- 登录 -->
 	<select id="selectUserByLoginName" resultMap="userMap">
-		select * from user where login_name=#{loginName}
+		select user_id, login_name, password, secret_key, employee_code, name, gender, department_id, phone, email, create_by_id, create_at, is_deleted from user where login_name=#{loginName}
 	</select>
 	
 	<!-- 获取某用户的全部菜单权限 -->
@@ -34,12 +34,12 @@
 	
 	<!-- 根据ID精确查找用户 -->
 	<select id="selectUserByUserId" resultMap="userMap">
-		select * from user where user_id=#{userId}
+		select user_id, login_name, password, secret_key, employee_code, name, gender, department_id, phone, email, create_by_id, create_at, is_deleted from user where user_id=#{userId}
 	</select>
 	
 	<!-- 对用户的通用查询  -->
 	<select id="selectUser" parameterType="com.ducetech.framework.model.User" resultMap="userMap">
-		select * from user where 1=1 
+		select user_id, login_name, password, secret_key, employee_code, name, gender, department_id, phone, email, create_by_id, create_at, is_deleted from user where 1=1
 		<if test="loginName!=null and loginName!=''">
 			and login_name=#{loginName}
 		</if>
@@ -121,6 +121,6 @@
 	
 	<!-- 通过角色ID获取人员  -->
 	<select id="selectUsersByRoleId" resultMap="userMap">
-		select * from `user` where user_id in (select user_id from user_role where role_id=#{roleId})
+		select user_id, login_name, password, secret_key, employee_code, name, gender, department_id, phone, email, create_by_id, create_at, is_deleted from user where user_id in (select user_id from user_role where role_id=#{roleId})
 	</select>
 </mapper>

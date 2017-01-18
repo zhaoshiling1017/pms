@@ -14,12 +14,6 @@ import com.ducetech.websocket.UserSocketVo;
 import com.ducetech.websocket.WSSessionLocalCache;
 import com.ducetech.websocket.WebsocketEndPoint;
 
-/** 
- * @ClassName: TopicMessageListener  
- * @author chensf
- * @date 2016年5月11日 下午12:21:46 
- * @Description: 系统redis主频道监听
- */
 @Service
 public class TopicMessageListener implements MessageListener {
 	
@@ -37,8 +31,7 @@ public class TopicMessageListener implements MessageListener {
 	
 	@Override
 	public void onMessage(Message message, byte[] pattern) {
-		byte[] body = message.getBody();// 请使用valueSerializer
-		// 请参考配置文件，本例中key，value的序列化方式均为string。
+		byte[] body = message.getBody();
 		// 其中key必须为stringSerializer。和redisTemplate.convertAndSend对应
 		String itemValue = (String) redisTemplate.getValueSerializer().deserialize(body);
 		String[] userAndMessage = itemValue.split(":");

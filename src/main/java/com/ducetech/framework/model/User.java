@@ -3,13 +3,6 @@ package com.ducetech.framework.model;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * @ClassName: User
- * @author chensf
- * @date 2015年9月25日 上午11:00:30
- * @Description: 用户
- */
-
 public class User extends BaseModel implements Serializable {
 
 	private static final long serialVersionUID = 1L;

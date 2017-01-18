@@ -2,7 +2,6 @@ package com.ducetech.shiro;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -12,13 +11,15 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ducetech.framework.model.User;
 import com.ducetech.framework.service.UserService;
 public class AuthRealm extends AuthorizingRealm {
 	
-	private static Logger log = Logger.getLogger(AuthRealm.class);
+	private static Logger logger = LoggerFactory.getLogger(AuthRealm.class);
 	
 	@Autowired
 	private UserService userService;
@@ -42,9 +43,8 @@ public class AuthRealm extends AuthorizingRealm {
 		// 调用userService的方法，获取当前对象
 		UsernamePasswordToken userToken = (UsernamePasswordToken) token;
 		User _user = userService.getUserByLoginName(userToken.getUsername());
-		
 		if (_user == null) {
-			log.info("User为空!");
+			logger.info("User为空!");
 			return null;
 		} else {
 			// getName,shiro可以有多个realm，告诉底层具体是哪一个realm

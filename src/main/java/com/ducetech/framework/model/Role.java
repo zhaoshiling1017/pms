@@ -3,14 +3,7 @@ package com.ducetech.framework.model;
 import java.io.Serializable;
 import java.util.List;
 
-/** 
- * @ClassName: Role  
- * @author chensf
- * @date 2015年9月25日 下午12:32:55 
- * @Description: 角色
- */
-
-public class Role extends BaseModel implements Serializable{
+public class Role extends BaseModel implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

@@ -335,6 +335,13 @@
 			<version>20.0</version>
 		</dependency>
 
+		<!-- druid -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>druid</artifactId>
+			<version>1.0.27</version>
+		</dependency>
+
 	</dependencies>
 
   	<build>

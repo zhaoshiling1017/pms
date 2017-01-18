@@ -435,8 +435,8 @@ public class PermissionController extends BaseController{
 			cachePool.putCacheItem(role.getRoleId(), users);
 			myCache.getRoleIdsCache().put(role.getRoleId(),ids);
 		}
-		log.info("-------------------------------------------");
-		log.info("--------------缓存跟新完成----------------");
-		log.info("-------------------------------------------");
+		logger.info("-------------------------------------------");
+		logger.info("--------------缓存跟新完成----------------");
+		logger.info("-------------------------------------------");
 	}
 }

@@ -407,7 +407,7 @@ public class TaskServiceImpl implements TaskService {
 		} 
 	}
 	
-	@Async
+	//@Async 此时@Async不起作用　解决方案：把sendMessage方法刚到另一个类中，然后在类上加@Async注解
 	public void sendMessage(Set<String> roleIds) {
 		CachePool cachePool = CachePool.getInstance();
 		Role r = new Role();

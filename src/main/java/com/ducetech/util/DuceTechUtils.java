@@ -1,5 +1,7 @@
 package com.ducetech.util;
 
+import com.ducetech.constant.Constant;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -9,12 +11,6 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
-/** 
- * @ClassName: DuceTechUtils  
- * @author chensf
- * @date 2015年12月3日 下午2:41:09 
- * @Description: 工具类
- */
 public class DuceTechUtils {
 	/** 
 	* @Title: readProp  
@@ -24,8 +20,9 @@ public class DuceTechUtils {
 	*/
 	public static String readProp(String key) throws IOException{
 		Properties prop = new Properties();
-		InputStream in = DuceTechUtils.class.getClassLoader().getResourceAsStream("system.properties");
+		InputStream in = DuceTechUtils.class.getClassLoader().getResourceAsStream(Constant.SYSTEM_PROP_FILE_NAME);
 		prop.load(in);
+		in.close();
 		return prop.getProperty(key);
 	}
 	

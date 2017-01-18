@@ -94,6 +94,6 @@ public class Constant {
 	public static final  String NODE_RED="2";			//节点红色
 	public static final  String NODE_YELLOW="3";		//节点黄色
 	
-	
+	public static final String SYSTEM_PROP_FILE_NAME = "system.properties";
 	
 }

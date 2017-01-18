@@ -1,12 +1,6 @@
 package com.ducetech.framework.model;
 
-/** 
- * @ClassName: BaseModel  
- * @author chensf
- * @date 2015年9月25日 上午11:45:58 
- * @Description: 基类
- */
-public class BaseModel{
+public class BaseModel {
 
 	private String createById;		//创建人ID
 	

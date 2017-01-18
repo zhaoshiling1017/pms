@@ -75,7 +75,7 @@ public class ManageTest {
 	
 	@Test
 	public void redis() {
-		myRedisTemplate.sendMessage("1", Constant.NOTICE_TYPE_INFO);
+		//myRedisTemplate.sendMessage("1", Constant.NOTICE_TYPE_INFO);
 		myRedisTemplate.setItem("csf", "csf89757");
 		System.err.println(myRedisTemplate.getItem("csf"));
 	}

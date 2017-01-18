@@ -1166,7 +1166,8 @@ CREATE TABLE `user` (
   `create_by_id` int(11) DEFAULT '1',
   `create_at` datetime DEFAULT NULL,
   `is_deleted` varchar(10) DEFAULT '0',
-  PRIMARY KEY (`user_id`)
+  PRIMARY KEY (`user_id`),
+  KEY `index_login_name` (`login_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
 
 /*Data for the table `user` */

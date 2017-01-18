@@ -8,13 +8,13 @@
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
     <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">  
-       <!--  <property name="maxIdle" value="${redis.maxIdle}" />  
-        <property name="maxActive" value="${redis.maxActive}" />  
-        <property name="maxWait" value="${redis.maxWait}" />  
-        <property name="testOnBorrow" value="${redis.testOnBorrow}" />   -->
+        <property name="maxIdle" value="${redis.maxIdle}" />
+        <property name="maxTotal" value="${redis.maxActive}" />
+        <property name="maxWaitMillis" value="${redis.maxWait}" />
+        <!--property name="testOnBorrow" value="${redis.testOnBorrow}" /-->
     </bean>  
     
-    <bean id="shardedJedisPool" class="redis.clients.jedis.ShardedJedisPool"  scope="singleton">
+    <!--bean id="shardedJedisPool" class="redis.clients.jedis.ShardedJedisPool"  scope="singleton">
         <constructor-arg index="0" ref="jedisPoolConfig" />
         <constructor-arg index="1">
             <list>
@@ -25,22 +25,47 @@
                 </bean>
             </list>
         </constructor-arg>
-    </bean>
+    </bean-->
     
-    <bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"  
-        p:host-name="${redis.host}" p:port="${redis.port}" p:password="${redis.pass}"  p:pool-config-ref="jedisPoolConfig"/>  
+    <!-- bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+        p:host-name="${redis.host}" p:port="${redis.port}" p:password="${redis.pass}"  p:pool-config-ref="jedisPoolConfig"/ -->
+
+    <bean id="connectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="usePool" value="true"></property>
+        <property name="hostName" value="${redis.host}" />
+        <property name="port" value="${redis.port}" />
+        <property name="password" value="#{'${redis.pass}'!=''?'${redis.pass}':null}" />
+        <property name="timeout" value="${redis.timeout}" />
+        <property name="database" value="${redis.default.db}"></property>
+        <constructor-arg index="0" ref="jedisPoolConfig" />
+    </bean>
+
+    <bean id="stringSerializer" class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+
     <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">  
-        <property name="connectionFactory"   ref="connectionFactory" />  
-        <property name="keySerializer">
+        <property name="connectionFactory"   ref="connectionFactory" />
+        <property name="defaultSerializer" ref="stringSerializer" />
+        <!-- property name="keySerializer">
              <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
         </property>
       	<property name="valueSerializer">
              <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />
       	</property>
-    </bean> 
+        <property name="valueSerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+        </property>
+        <property name="hashKeySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+        </property>
+        <property name="hashValueSerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+        </property -->
+    </bean>
+
     <bean id="topicMessageListener" class="com.ducetech.listener.TopicMessageListener">  
         <property name="redisTemplate" ref="redisTemplate"></property>  
     </bean>
+
     <bean id="topicContainer" class="org.springframework.data.redis.listener.RedisMessageListenerContainer" destroy-method="destroy">  
         <property name="connectionFactory" ref="connectionFactory"/>  
         <property name="taskExecutor"><!-- 此处有个奇怪的问题，无法正确使用其他类型的Executor -->  

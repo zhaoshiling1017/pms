@@ -5,7 +5,7 @@ import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.apache.commons.dbcp.BasicDataSource;
+import com.alibaba.druid.pool.DruidDataSource;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.slf4j.Logger;
@@ -13,16 +13,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ScriptRunnerExecSql{
+public class ScriptRunnerExecSql {
 
 	protected Logger log = LoggerFactory.getLogger(getClass());
 	
-	private BasicDataSource dataSource;
+	private DruidDataSource dataSource;
 	
 	public ScriptRunnerExecSql() {
 	}
 	
-	public ScriptRunnerExecSql(BasicDataSource dataSource) {
+	public ScriptRunnerExecSql(DruidDataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 

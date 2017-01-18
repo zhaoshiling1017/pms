@@ -2,14 +2,17 @@ package com.ducetech.framework.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.context.EnvironmentAware;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-public class IndexController extends BaseController {
+public class IndexController extends BaseController implements EnvironmentAware {
 
+	private Environment env;
 	
 	@RequestMapping("/")
 	public String index(HttpServletRequest request, Model model) {
@@ -30,5 +33,10 @@ public class IndexController extends BaseController {
 	@RequestMapping(value = "/500", method = RequestMethod.GET)
 	public String error() {
 		return "500";
+	}
+
+	@Override
+	public void setEnvironment(Environment environment) {
+		this.env = environment;
 	}
 }

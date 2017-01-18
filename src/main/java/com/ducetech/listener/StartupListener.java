@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,7 @@ public class StartupListener implements ApplicationListener<ContextRefreshedEven
 	private RoleDAO roleDAO;
 	
 	@Autowired
-	private BasicDataSource dataSource;
+	private DruidDataSource dataSource;
 	
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {

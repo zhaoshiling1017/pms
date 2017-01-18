@@ -17,15 +17,15 @@ import com.ducetech.util.CookieUtil;
 
 @Controller
 public class BaseController {
-	protected Logger log = LoggerFactory.getLogger(getClass());
+	protected Logger logger = LoggerFactory.getLogger(getClass());
 	
     @Autowired
     UserService userService;
     
     /** 基于@ExceptionHandler异常处理 */  
     @ExceptionHandler
-    public String exp(HttpServletRequest request, Exception ex) {  
-    	log.error("ducetech.com exception:", ex);
+    public String exp(HttpServletRequest request, Exception ex) {
+        logger.error("ducetech.com exception: {}.", ex.getMessage());
     	request.setAttribute("message", ex.getMessage());
     	
     	/*String  expMessage = ExceptionUtils.getFullStackTrace(ex);
@@ -38,8 +38,8 @@ public class BaseController {
     }
 
     public User getLoginUser(HttpServletRequest request, Model model) {
-        User user = (User) SecurityUtils.getSubject().getSession().getAttribute("DT_LOGIN_USER");
-        if (user == null || StringUtils.isEmpty(user.getName())) {
+        User user = (User) SecurityUtils.getSubject().getSession().getAttribute(CookieUtil.USER_NAME);
+        if (null == user || StringUtils.isEmpty(user.getName())) {
             String userId = CookieUtil.getLoginUserId(request);
             if (StringUtils.isNotEmpty(userId)) {
                 user = userService.getUserByUserId(userId);
@@ -50,7 +50,7 @@ public class BaseController {
     }
 
     public User getLoginUser(HttpServletRequest request) {
-        User user = (User) SecurityUtils.getSubject().getSession().getAttribute("DT_LOGIN_USER");
+        User user = (User) SecurityUtils.getSubject().getSession().getAttribute(CookieUtil.USER_NAME);
         if (user == null || StringUtils.isEmpty(user.getName())) {
             String userId = CookieUtil.getLoginUserId(request);
             if (StringUtils.isNotEmpty(userId)) {
